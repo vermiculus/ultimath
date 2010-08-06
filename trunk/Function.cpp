@@ -89,28 +89,28 @@ void Function::ParseImpliedMultiplication(void)
 		{
 			if(index==0) // if at the beginning
 			{
-				if(this->definition[index+1] == '(' || isdigit(this->definition[index+1])) // if the next char is ( or a digit
+				if(this->definition[index+1] == LPAREN || isdigit(this->definition[index+1])) // if the next char is ( or a digit
 				{
-					if(this->definition[index] != '*') // if the previous char is not *
+					if(this->definition[index] != MULTIPLY) // if the previous char is not MULTIPLY
 					{
-						this->definition.insert(index+1, "*"); // insert and asterisk
+						this->definition.insert(index+1, "" + MULTIPLY); // insert an asterisk
 						index--;
 					}
 				}
 			}
 			else // if somewhere in the middle
 			{
-				if(this->definition[index-1] != '*')
+				if(this->definition[index-1] != MULTIPLY)
 				{
 					this->definition.insert(index, "*");
 					index++;
 				}
-				if(this->definition[index+1] == '(' || isdigit(this->definition[index+1]))
+				if(this->definition[index+1] == LPAREN || isdigit(this->definition[index+1]))
 				{
 					this->definition.insert(index+1, "*");
 					index--;
-				}
-				if(this->definition[index+1] == ')' && isdigit(this->definition[index+2]))
+				} 
+				if(this->definition[index+1] == RPAREN && isdigit(this->definition[index+2]))
 				{
 					this->definition.insert(index+2, "*");
 					index--;
@@ -141,9 +141,9 @@ void Function::PerformParanthesis(void)
 	int IndexOfLParen(-1), IndexOfRParen(-1);
 	for(unsigned int index = 0; index < this->definition.length(); index++)
 	{
-		if(this->definition[index] == '(')
+		if(this->definition[index] == LPAREN)
 			IndexOfLParen = index;
-		if(this->definition[index] == ')')
+		if(this->definition[index] == RPAREN)
 			IndexOfRParen = index;
 	}
 	if(IndexOfLParen || IndexOfRParen) // if no parens were found
@@ -206,13 +206,13 @@ void Function::PerformMultiplicationAndDivision(void)
 			string Left, Right;
 			for(unsigned int j = i - 1; j > 0; j--) //see next comment
 			{
-				if(!(isdigit(this->definition[j]) || this->definition[j] == '.')) break;
+				if(!(isdigit(this->definition[j]) || this->definition[j] == DECIMAL)) break;
 				Left.insert(0, &this->definition[j], 1);
 			}
 			Left.insert(0, &this->definition[0], 1); //otherwise we get a member out of range error because j was decremented when it j==0 already...
 			for(unsigned int j = i + 1; j < this->definition.length(); j++)
 			{
-				if(!(isdigit(this->definition[j]) || this->definition[j] == '.')) break;
+				if(!(isdigit(this->definition[j]) || this->definition[j] == DECIMAL)) break;
 				Right.append(&this->definition[j], 1);
 				ArgumentEndIndex = j;
 			}
@@ -284,13 +284,13 @@ void Function::PerformAdditionAndSubtraction(void)
 			string Left, Right;
 			for(unsigned int j = i - 1; j > 0; j--) //see next comment
 			{
-				if(!(isdigit(this->definition[j]) || this->definition[j] == '.')) break;
+				if(!(isdigit(this->definition[j]) || this->definition[j] == DECIMAL)) break;
 				Left.insert(0, &this->definition[j], 1);
 			}
 			Left.insert(0, &this->definition[0], 1); //otherwise we get a member out of range error because j was decremented when it j==0 already...
 			for(unsigned int j = i + 1; j < this->definition.length(); j++)
 			{
-				if(!(isdigit(this->definition[j]) || this->definition[j] == '.')) break;
+				if(!(isdigit(this->definition[j]) || this->definition[j] == DECIMAL)) break;
 				Right.append(&this->definition[j], 1);
 				ArgumentEndIndex = j;
 			}
