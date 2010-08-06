@@ -2,7 +2,7 @@
 #include "math.h"
 #include <cmath>
 #include <iostream>
-#include "Global Constants.h"
+//#include "Global Constants.h" (not included in SVN repository - not necessary at this stage of the game, and besides it only defines PI and EPSILON.
 
 //#include <vector>
 
