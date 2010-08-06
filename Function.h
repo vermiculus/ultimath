@@ -47,14 +47,17 @@ public:
 	double argument; // a value passed to the function
 	double value; // the value of the function at the argument
 private:
-	enum OPERATOR {
+	const enum OPERATOR {
 		ADD = '+',
 		SUBTRACT = '-',
 		MULTIPLY = '*',
 		DIVIDE = '/',
 		EXPONENT = '^',
 		MODULUS = '%',
-		FACTORIAL = '!'
+		FACTORIAL = '!',
+		RPAREN = ')',
+		LPAREN = '(',
+		DECIMAL = '.'
 	};
 	//enum FUNCTION { // is there any way to make an enumeration of strings or char[] ?
 	//	SINE, // = "sin",
