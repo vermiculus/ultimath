@@ -46,6 +46,8 @@ public:
 
 	double argument; // a value passed to the function
 	double value; // the value of the function at the argument
+
+	void Display(); // primarily for debugging purposes
 private:
 	const enum OPERATOR {
 		ADD = '+',
@@ -79,5 +81,4 @@ private:
 	void PerformMultiplicationAndDivision();
 	void PerformAdditionAndSubtraction();
 
-	void DisplayFunction();
 };

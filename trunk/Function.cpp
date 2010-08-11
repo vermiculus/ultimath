@@ -30,29 +30,29 @@ double Function::Evaluate(double argument)
 	//needs to replace val for var
 
 	this->StripWhiteSpace(); // 2 x, 2 ( x + 5 ) -> 2x, 2(x+5)
-	this->DisplayFunction(); //debugging
+	this->Display(); //debugging
 
 	this->ParseImpliedMultiplication(); //2x, 2(x+5) -> 2*x, 2*(x+5)
-	this->DisplayFunction(); //debugging
+	this->Display(); //debugging
 
 	this->PerformFunctions(); // sin, cos, tan, etc.
-	this->DisplayFunction(); //debugging
+	this->Display(); //debugging
 
 	this->PerformParanthesis(); // recursive; 2*(5+8(4)) -> 2*41
-	this->DisplayFunction(); //debugging
+	this->Display(); //debugging
 
 	this->PerformExponentiation(); // 5^2, 5^3 -> 5*5, 5*5*5
-	this->DisplayFunction(); //debugging
+	this->Display(); //debugging
 
 	this->PerformMultiplicationAndDivision(); // 4*8 -> 32
-	this->DisplayFunction(); //debugging
+	this->Display(); //debugging
 
 	this->PerformAdditionAndSubtraction(); // 2+2 -> 4
-	this->DisplayFunction(); //debugging
+	this->Display(); //debugging
 
 	return this->value;
 }
-void Function::DisplayFunction(void)
+void Function::Display(void)
 {
 	printf("\nFunction: ");
 	for(unsigned int index = 0; index < this->definition.length(); index++)
@@ -103,10 +103,10 @@ void Function::ParseImpliedMultiplication(void)
 				if(this->definition[index-1] != MULTIPLY)
 				{
 					this->definition.insert(index, "*");
-					index++;
+					//index++;
 				}
 				if(this->definition[index+1] == LPAREN || isdigit(this->definition[index+1]))
-				{
+				{ // always throws a 'subcript out of range' error - can't seem to fix.
 					this->definition.insert(index+1, "*");
 					index--;
 				} 
