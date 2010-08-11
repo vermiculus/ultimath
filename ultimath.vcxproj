@@ -12,11 +12,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basics.cpp" />
+    <ClCompile Include="chassis.cpp" />
     <ClCompile Include="Function.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.h" />
     <ClInclude Include="Function.h" />
+    <ClInclude Include="ultimath.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6E31C6A3-98E7-4FD3-922F-5682C22104C1}</ProjectGuid>
