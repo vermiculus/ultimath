@@ -74,6 +74,7 @@ private:
 	// recurse all of these to eliminate all occurances
 	bool Validate();
 	void StripWhiteSpace();
+	void InsertArgument();
 	void ParseImpliedMultiplication();
 	void PerformFunctions();
 	void PerformParanthesis();

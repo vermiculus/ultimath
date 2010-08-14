@@ -1,6 +1,17 @@
 #include "Function.h"
 #include <cmath>
 #include <sstream>
+//utilities
+string replace(string original, string replace, string with)
+{
+	int pos = 0;
+	while ((pos = original.find(replace, pos)) != -1) 
+	{ 
+	   original.erase(pos, replace.length());
+	   original.insert(pos, with);
+	}
+	return original;
+}
 
 Function::Function(char definition[], char parameter)
 {
@@ -32,6 +43,9 @@ double Function::Evaluate(double argument)
 	this->StripWhiteSpace(); // 2 x, 2 ( x + 5 ) -> 2x, 2(x+5)
 	this->Display(); //debugging
 
+	this->InsertArgument(); //2x -> 2(x)
+	this->Display();
+
 	this->ParseImpliedMultiplication(); //2x, 2(x+5) -> 2*x, 2*(x+5)
 	this->Display(); //debugging
 
@@ -45,7 +59,7 @@ double Function::Evaluate(double argument)
 	this->Display(); //debugging
 
 	this->PerformMultiplicationAndDivision(); // 4*8 -> 32
-	this->Display(); //debugging
+	this->Display(); //debugging - infinite loop somewhere
 
 	this->PerformAdditionAndSubtraction(); // 2+2 -> 4
 	this->Display(); //debugging
@@ -69,7 +83,7 @@ bool Function::Validate(void)
 
 void Function::StripWhiteSpace(void)
 {
-	printf("\nEntered White Space Stripper");
+	printf("\nEntering White Space Stripper");
 	for(unsigned int index = 0; index < this->definition.length(); index++)
 	{
 		if(this->definition[index] == ' ')
@@ -80,37 +94,46 @@ void Function::StripWhiteSpace(void)
 	}
 }
 
+void Function::InsertArgument(void)
+{
+	char arg[255];
+	sprintf_s(arg, "(%f)", this->argument); // need to improve preservation of the integrity of the argument (double => float)
+	this->definition = replace(this->definition, "x", arg);
+}
+
 void Function::ParseImpliedMultiplication(void)
 {
-	printf("\nEntered Implied Multiplication Parser");
+	printf("\nEntering Implied Multiplication Parser");
 	for(unsigned int index = 0; index < this->definition.length(); index++)
 	{
 		if(this->definition[index] == this->parameter)
 		{
 			if(index==0) // if at the beginning
 			{
-				if(this->definition[index+1] == LPAREN || isdigit(this->definition[index+1])) // if the next char is ( or a digit
+				if(this->definition[index+1] == '(' || isdigit(this->definition[index+1])) // if the next char is ( or a digit
 				{
-					if(this->definition[index] != MULTIPLY) // if the previous char is not MULTIPLY
+					if(this->definition[index] != '*') // if the previous char is not MULTIPLY
 					{
-						this->definition.insert(index+1, "" + MULTIPLY); // insert an asterisk
+						this->definition.insert(index+1, "*"); // insert an asterisk
 						index--;
 					}
 				}
 			}
 			else // if somewhere in the middle
 			{
-				if(this->definition[index-1] != MULTIPLY)
+				if(this->definition[index-1] != '*')
 				{
 					this->definition.insert(index, "*");
 					//index++;
 				}
-				if(this->definition[index+1] == LPAREN || isdigit(this->definition[index+1]))
+				if(index+1==this->definition.length())
+					return; // here is the snippet of corrective code - but this project would still benefit from a complete makeover.
+				if(this->definition[index+1] == '(' || isdigit(this->definition[index+1]))
 				{ // always throws a 'subcript out of range' error - can't seem to fix.
 					this->definition.insert(index+1, "*");
 					index--;
 				} 
-				if(this->definition[index+1] == RPAREN && isdigit(this->definition[index+2]))
+				if(this->definition[index+1] == ')' && isdigit(this->definition[index+2]))
 				{
 					this->definition.insert(index+2, "*");
 					index--;
@@ -122,7 +145,7 @@ void Function::ParseImpliedMultiplication(void)
 
 void Function::PerformFunctions(void)
 {
-	printf("\nEntered Functions Parser");
+	printf("\nEntering Functions Parser");
 	/*
 	Supported Functions:
 	sin csc
@@ -136,7 +159,7 @@ void Function::PerformFunctions(void)
 
 void Function::PerformParanthesis(void)
 {
-	printf("\nEntered Parenthesis Parser");
+	printf("\nEntering Parenthesis Parser");
 	string Param;
 	int IndexOfLParen(-1), IndexOfRParen(-1);
 	for(unsigned int index = 0; index < this->definition.length(); index++)
@@ -155,7 +178,7 @@ void Function::PerformParanthesis(void)
 
 void Function::PerformExponentiation(void)
 {
-	printf("\nEntered Exponentiation Parser");
+	printf("\nEntering Exponentiation Parser");
 	//for(unsigned int index = 0; index < this->definition.length(); index++)
 }
 
@@ -196,7 +219,7 @@ void Function::PerformMultiplicationAndDivision(void)
 	//	}
 	//}
 	
-    printf("\nEntered Multiplication and Division Parser\n");
+    printf("\nEntering Multiplication and Division Parser\n");
     int ArgumentEndIndex(0);
     for(unsigned int i = 0; i < this->definition.length(); i++)
     {
@@ -274,7 +297,7 @@ void Function::PerformAdditionAndSubtraction(void)
 	//		index--;
 	//	}
 	//}
-	printf("\nEntered Addition and Subtraction Parser\n");
+	printf("\nEntering Addition and Subtraction Parser\n");
     int ArgumentEndIndex(0);
     for(unsigned int i = 0; i < this->definition.length(); i++)
     {
