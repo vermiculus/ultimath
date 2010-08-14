@@ -2,6 +2,8 @@
 #include <cmath>
 #include <sstream>
 //utilities
+
+/* not really needed - used once
 string replace(string original, string replace, string with)
 {
 	int pos = 0;
@@ -11,7 +13,7 @@ string replace(string original, string replace, string with)
 	   original.insert(pos, with);
 	}
 	return original;
-}
+}*/
 
 Function::Function(char definition[], char parameter)
 {
@@ -98,7 +100,13 @@ void Function::InsertArgument(void)
 {
 	char arg[255];
 	sprintf_s(arg, "(%f)", this->argument); // need to improve preservation of the integrity of the argument (double => float)
-	this->definition = replace(this->definition, "x", arg);
+	//this->definition = replace(this->definition, "x", arg);
+	int pos = 0;
+	while ((pos = this->definition.find(this->parameter, pos)) != -1) 
+	{ 
+	   this->definition.erase(pos, 1);
+	   this->definition.insert(pos, arg);
+	}
 }
 
 void Function::ParseImpliedMultiplication(void)
