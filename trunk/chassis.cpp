@@ -13,5 +13,10 @@ int main( void )
 	cin.sync();
 	cout << "Please press enter to exit.";
 	cin.ignore();
+
+	// Did you know? Some DIC member (I forget who at the moment) did a benchmark test
+	// to see which was faster, and printf() is almost twice as fast.
+	// I suppose it doesn't matter - because engines don't output anything visually anyway lol
+
 	return 0;
 }

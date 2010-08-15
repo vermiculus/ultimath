@@ -17,7 +17,8 @@ string replace(string original, string replace, string with)
 
 Function::Function(char definition[], char parameter)
 {
-	this->parameter = parameter; // perform char validation  -  cannot be a number 
+	if(isalpha(parameter))
+		this->parameter = parameter; // perform char validation  -  cannot be a number 
 	this->definition = definition;
 }
 Function::Function(string definition, char parameter)
@@ -95,8 +96,8 @@ void Function::StripWhiteSpace(void)
 void Function::InsertArgument(void)
 {
 	char arg[256];
-	sprintf(arg, "(%15.10f)", this->argument); // need to improve preservation of the integrity of the argument (double => float)
-	//this->definition = replace(this->definition, "x", arg);
+	sprintf(arg, "(%f)", this->argument); // need to improve preservation of the integrity of the argument (double => float)
+	// now 'arg' has more whitespace in it. what is that %15.10f thing about anyway? When I remove 15.10 the problem appears to disappear
 	int pos = 0;
 	while ((pos = this->definition.find(this->parameter, pos)) != -1) 
 	{ 
