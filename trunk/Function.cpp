@@ -1,24 +1,11 @@
 #include "Function.h"
 #include <cmath>
 #include <sstream>
-//utilities
-
-/* not really needed - used once
-string replace(string original, string replace, string with)
-{
-	int pos = 0;
-	while ((pos = original.find(replace, pos)) != -1) 
-	{ 
-	   original.erase(pos, replace.length());
-	   original.insert(pos, with);
-	}
-	return original;
-}*/
 
 Function::Function(char definition[], char parameter)
 {
 	if(isalpha(parameter))
-		this->parameter = parameter; // perform char validation  -  cannot be a number 
+		this->parameter = parameter;
 	this->definition = definition;
 }
 Function::Function(string definition, char parameter)
@@ -96,8 +83,7 @@ void Function::StripWhiteSpace(void)
 void Function::InsertArgument(void)
 {
 	char arg[256];
-	sprintf(arg, "(%f)", this->argument); // need to improve preservation of the integrity of the argument (double => float)
-	// now 'arg' has more whitespace in it. what is that %15.10f thing about anyway? When I remove 15.10 the problem appears to disappear
+	sprintf(arg, "(%f)", this->argument);
 	int pos = 0;
 	while ((pos = this->definition.find(this->parameter, pos)) != -1) 
 	{ 
@@ -107,11 +93,73 @@ void Function::InsertArgument(void)
 }
 
 void Function::ParseImpliedMultiplication(void)
-{
+{ // instead of if/then - perhaps switches would be better. That way it will loop again once the command is complete.
 	printf("\nEntering Implied Multiplication Parser");
+	/*
+	Pseudocode
+
+	BUFFERS PREVIOUS_CHAR, THIS_CHAR, NEXT_CHAR
+	SWITCHES INSERT_BEFORE, INSERT_AFTER, DO_NOTHING
+	
+	While iterating through the characters in the definition
+	{
+		If THIS_CHAR is MULTIPLY
+			skip
+		If this char is a DIGIT
+			If PREVIOUS_CHAR is a DIGIT and NEXT_CHAR is a DIGIT
+				DO_NOTHING
+			If PREVIOUS_CHAR is NOT a DIGIT and NEXT_CHAR is a DIGIT
+				INSERT_BEFORE
+			If PREVIOUS_CHAR is a DIGIT and NEXT_CHAR is NOT a DIGIT
+				INSERT_AFTER
+		If THIS_CHAR is PARAMETER
+			If THIS_CHAR is not FIRST
+				If PREVIOUS CHAR is a RPAREN, DIGIT
+					INSERT_BEFORE
+			If THIS_CHAR is not LAST
+				If NEXT CHAR is a LPAREN, DIGIT
+					INSERT_AFTER
+		If INSERT_BEFORE
+			Insert a MULTIPLY before THIS_CHAR
+			DECREMENT ITERATOR
+		If INSERT_AFTER
+			Insert a MULTIPLY after THIS_CHAR
+		If DO_NOTHING
+			Skip this char
+	}
+	*/
+	char parameter(this->parameter);
 	for(unsigned int index = 0; index < this->definition.length(); index++)
 	{
-		if(this->definition[index] == this->parameter)
+		char prevchar, thischar(this->definition[index]), nextchar;
+		bool insert_before, insert_after, do_nothing;
+
+		thischar = this->definition[index];
+		if(index != 0) prevchar = this->definition[index-1];
+		if(index != this->definition.length() - 1) nextchar = this->definition[index+1];
+
+		if( thischar == OPERATOR::ADD ||
+			thischar == OPERATOR::DECIMAL ||
+			thischar == OPERATOR::DIVIDE ||
+			thischar == OPERATOR::EXPONENT ||
+			thischar == OPERATOR::FACTORIAL ||
+			thischar == OPERATOR::LPAREN ||
+			thischar == OPERATOR::MODULUS ||
+			thischar == OPERATOR::MULTIPLY ||
+			thischar == OPERATOR::RPAREN ||
+			thischar == OPERATOR::SUBTRACT)
+			continue;
+		if(isdigit(thischar))
+		{
+			if(isdigit(prevchar) && isdigit(nextchar))
+				do_nothing = true;
+			if(!isdigit(prevchar) && isdigit(nextchar))
+				insert_before = true;
+			if(isdigit(prevchar) && !isdigit(nextchar))
+				insert_after = true;
+		}
+
+		/*if(this->definition[index] == this->parameter)
 		{
 			if(index==0) // if at the beginning
 			{
@@ -124,27 +172,28 @@ void Function::ParseImpliedMultiplication(void)
 					}
 				}
 			}
-			else // if somewhere in the middle
-			{
-				if(this->definition[index-1] != '*')
-				{
-					this->definition.insert(index, "*");
-					index++; 
-				}
-				if(index+1==this->definition.length())
-					return; // here is the snippet of corrective code - but this project would still benefit from a complete makeover.
-				if(this->definition[index+1] == '(' || isdigit(this->definition[index+1]))
-				{ // always throws a 'subcript out of range' error - can't seem to fix.
-					this->definition.insert(index+1, "*");
-					index--;
-				} 
-				if(this->definition[index+1] == ')' && isdigit(this->definition[index+2]))
-				{
-					this->definition.insert(index+2, "*");
-					index--;
-				}
-			}
 		}
+		else // if somewhere in the middle
+		{
+			if(this->definition[index-1] != '*')
+			{
+				this->definition.insert(index, "*");
+				index++; 
+			}
+			if(index+1==this->definition.length())
+				return; // here is the snippet of corrective code - but this project would still benefit from a complete makeover.
+			if(this->definition[index+1] == '(' || isdigit(this->definition[index+1]))
+			{ // always throws a 'subcript out of range' error - can't seem to fix.
+				this->definition.insert(index+1, "*");
+				index--;
+			} 
+			if(this->definition[index+1] == ')' && isdigit(this->definition[index+2]))
+			{
+				this->definition.insert(index+2, "*");
+				index--;
+			}
+		}*/
+		
 	}
 }
 
@@ -189,40 +238,40 @@ void Function::PerformExponentiation(void)
 
 void Function::PerformMultiplicationAndDivision(void)
 {
-	//printf("\nEntered Multiplication and Division Parser");
-	//int ArgumentStartIndex(0), ArgumentEndIndex(0);
-	//for(unsigned int index = 0; index < this->definition.length(); index++)
-	//{
-	//	if(this->definition[index] == MULTIPLY || this->definition[index] == DIVIDE)
-	//	{
-	//		double LParam, RParam;
-	//		string Left, Right;
-	//		int temp(0);
-	//		for(unsigned int index2 = index - 1; index2 > 0; index2--)
-	//		{
-	//			if(!(isdigit(this->definition[index2]) || this->definition[index2] == '.')) break;
-	//			Left.insert(0, &this->definition[index2], 1);
-	//			temp = index2;
-	//		}
-	//		if(temp != 0) ArgumentStartIndex = temp - 1;
-	//		else ArgumentStartIndex = temp;
-	//		Left.insert(0, &this->definition[ArgumentStartIndex], 1);
-	//		for(unsigned int index2 = index + 1; index2 < this->definition.length(); index2++)
-	//		{
-	//			if(!(isdigit(this->definition[index2]) || this->definition[index2] == '.')) break;
-	//			Right.append(&this->definition[index2], 1);
-	//			ArgumentEndIndex = index2;
-	//		}
-	//		LParam = strtod(Left.c_str(), NULL);
-	//		RParam = strtod(Right.c_str(), NULL);
-	//		ostringstream ValueOfArgument;
-	//		if(this->definition[index] == MULTIPLY) ValueOfArgument << LParam * RParam << this->definition[ArgumentEndIndex + 1];
-	//		if(this->definition[index] == DIVIDE) ValueOfArgument << LParam / RParam << this->definition[ArgumentEndIndex + 1];
-	//		this->definition.replace(ArgumentStartIndex, ArgumentEndIndex - ArgumentStartIndex + 1, ValueOfArgument.str());
-	//		//                       The argument start index here must be revised - also in {+,-}
-	//		index--;
-	//	}
-	//}
+	printf("\nEntered Multiplication and Division Parser");
+	int ArgumentStartIndex(0), ArgumentEndIndex(0);
+	for(unsigned int index = 0; index < this->definition.length(); index++)
+	{
+		if(this->definition[index] == MULTIPLY || this->definition[index] == DIVIDE)
+		{
+			double LParam, RParam;
+			string Left, Right;
+			int temp(0);
+			for(unsigned int index2 = index - 1; index2 > 0; index2--)
+			{
+				if(!(isdigit(this->definition[index2]) || this->definition[index2] == '.')) break;
+				Left.insert(0, &this->definition[index2], 1);
+				temp = index2;
+			}
+			if(temp != 0) ArgumentStartIndex = temp - 1;
+			else ArgumentStartIndex = temp;
+			Left.insert(0, &this->definition[ArgumentStartIndex], 1);
+			for(unsigned int index2 = index + 1; index2 < this->definition.length(); index2++)
+			{
+				if(!(isdigit(this->definition[index2]) || this->definition[index2] == '.')) break;
+				Right.append(&this->definition[index2], 1);
+				ArgumentEndIndex = index2;
+			}
+			LParam = strtod(Left.c_str(), NULL);
+			RParam = strtod(Right.c_str(), NULL);
+			ostringstream ValueOfArgument;
+			if(this->definition[index] == MULTIPLY) ValueOfArgument << LParam * RParam << this->definition[ArgumentEndIndex + 1];
+			if(this->definition[index] == DIVIDE) ValueOfArgument << LParam / RParam << this->definition[ArgumentEndIndex + 1];
+			this->definition.replace(ArgumentStartIndex, ArgumentEndIndex - ArgumentStartIndex + 1, ValueOfArgument.str());
+			//                       The argument start index here must be revised - also in {+,-}
+			index--;
+		}
+	}
 	
     printf("\nEntering Multiplication and Division Parser");
     int ArgumentEndIndex(0);

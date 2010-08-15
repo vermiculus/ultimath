@@ -6,9 +6,7 @@ int main( void )
 {
 	cout << "Testing has begun.\n";
 
-	Function test("2 x", 'x');
-	test.Display();
-	test.Evaluate(2);
+	//Insert code here :)
 
 	cin.sync();
 	cout << "Please press enter to exit.";
