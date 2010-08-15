@@ -22,6 +22,7 @@ Function::Function(char definition[], char parameter)
 }
 Function::Function(string definition, char parameter)
 {
+	// Set protected
 	this->parameter = parameter;
 	this->definition = definition;
 }
@@ -42,40 +43,37 @@ double Function::Evaluate(double argument)
 
 	//needs to replace val for var
 
-	this->StripWhiteSpace(); // 2 x, 2 ( x + 5 ) -> 2x, 2(x+5)
+	this->StripWhiteSpace();
 	this->Display(); //debugging
 
-	this->InsertArgument(); //2x -> 2(x)
+	this->InsertArgument();
+	this->Display(); //debugging
+
+	this->ParseImpliedMultiplication();
+	this->Display(); //debugging
+
+	this->PerformFunctions();
+	this->Display(); //you get the idea...
+
+	this->PerformParanthesis();
 	this->Display();
 
-	this->ParseImpliedMultiplication(); //2x, 2(x+5) -> 2*x, 2*(x+5)
-	this->Display(); //debugging
+	this->PerformExponentiation();
+	this->Display();
 
-	this->PerformFunctions(); // sin, cos, tan, etc.
-	this->Display(); //debugging
+	this->PerformMultiplicationAndDivision();
+	this->Display();
 
-	this->PerformParanthesis(); // recursive; 2*(5+8(4)) -> 2*41
-	this->Display(); //debugging
+	this->PerformAdditionAndSubtraction();
+	this->Display();
 
-	this->PerformExponentiation(); // 5^2, 5^3 -> 5*5, 5*5*5
-	this->Display(); //debugging
-
-	this->PerformMultiplicationAndDivision(); // 4*8 -> 32
-	this->Display(); //debugging - infinite loop somewhere
-
-	this->PerformAdditionAndSubtraction(); // 2+2 -> 4
-	this->Display(); //debugging
+	printf("\n");
 
 	return this->value;
 }
 void Function::Display(void)
 {
-	printf("\nFunction: ");
-	for(unsigned int index = 0; index < this->definition.length(); index++)
-	{
-		printf("%c", this->definition[index]);
-	}
-	printf("\n");
+	printf("\nFunction: %s\n", this->definition.c_str());
 }
 bool Function::Validate(void)
 {
@@ -132,7 +130,7 @@ void Function::ParseImpliedMultiplication(void)
 				if(this->definition[index-1] != '*')
 				{
 					this->definition.insert(index, "*");
-					//index++;
+					index++; 
 				}
 				if(index+1==this->definition.length())
 					return; // here is the snippet of corrective code - but this project would still benefit from a complete makeover.
@@ -227,14 +225,13 @@ void Function::PerformMultiplicationAndDivision(void)
 	//	}
 	//}
 	
-    printf("\nEntering Multiplication and Division Parser\n");
+    printf("\nEntering Multiplication and Division Parser");
     int ArgumentEndIndex(0);
     for(unsigned int i = 0; i < this->definition.length(); i++)
     {
 		if(this->definition[i] == MULTIPLY || this->definition[i] == DIVIDE)
 		{
-			double LParam, RParam;
-			string Left, Right;
+			double LParam, RParam; string Left, Right;
 			for(unsigned int j = i - 1; j > 0; j--) //see next comment
 			{
 				if(!(isdigit(this->definition[j]) || this->definition[j] == DECIMAL)) break;
@@ -267,7 +264,7 @@ void Function::PerformMultiplicationAndDivision(void)
 			cout << "ops = " << this->definition << endl << endl;
 		}
 	}
-} // COMPLETE
+}
 
 void Function::PerformAdditionAndSubtraction(void)
 {
@@ -305,7 +302,7 @@ void Function::PerformAdditionAndSubtraction(void)
 	//		index--;
 	//	}
 	//}
-	printf("\nEntering Addition and Subtraction Parser\n");
+	printf("\nEntering Addition and Subtraction Parser");
     int ArgumentEndIndex(0);
     for(unsigned int i = 0; i < this->definition.length(); i++)
     {
