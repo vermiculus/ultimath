@@ -16,6 +16,6 @@ Currently working on a parser that will take a string and convert it into a func
 
 <ul>
 <li>Complete Parser</li>
-<li>Compile a list of formulas (string representation - the same way you would input it into a handheld calculator<li>
+<li>Compile a list of formulas (string representation - the same way you would input it into a handheld calculator</li>
 <li>Add more goals. :D </li>
 </ul>
