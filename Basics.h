@@ -1,5 +1,4 @@
 #include <string>
-// svn test ftw
 
 struct Vector2
 {
@@ -28,21 +27,22 @@ struct Ratio
 	double Evaluate( void );
 };
 
-struct Number
-{
-	double value;
-	Number operator+( Number operand );
-	Number operator-( Number operand );
-	Number operator*( Number operand );
-	Number operator/( Number operand );
-	Number operator^( Number operand );
-	Number operator+( double operand );
-	Number operator-( double operand );
-	Number operator*( double operand );
-	Number operator/( double operand );
-	Number operator^( double operand );
-	double ToDouble();
-};
+//struct Number
+//{ // a wrapper if we ever end up needing it -
+//  // I only wanted to add a stupid exponentiation operater...
+//	double value;
+//	Number operator+( Number operand );
+//	Number operator-( Number operand );
+//	Number operator*( Number operand );
+//	Number operator/( Number operand );
+//	Number operator^( Number operand );
+//	Number operator+( double operand );
+//	Number operator-( double operand );
+//	Number operator*( double operand );
+//	Number operator/( double operand );
+//	Number operator^( double operand );
+//	double ToDouble();
+//};
 //struct Function
 //{
 //	Function(std::string definition, char variable); // constructor
