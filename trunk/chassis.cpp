@@ -1,13 +1,17 @@
-#include "ultimath.h" // This chassis would be pointless without it. This header file is a collection of the seperate components of the Ultimath Engine.
+#include "ultimath.h"
+// This chassis would be pointless without it.
+// This header file is a collection of the seperate components of the Ultimath Engine.
 
 int main( void )
 {
-	printf("Commence testing.\n\n");
+	cout << "Testing has begun.\n";
 
 	Function test("2 x", 'x');
 	test.Display();
 	test.Evaluate(2);
 
-	system("PAUSE"); // Feel free to contact me with a better option :P
+	cin.sync();
+	cout << "Please press enter to exit.";
+	cin.ignore();
 	return 0;
 }

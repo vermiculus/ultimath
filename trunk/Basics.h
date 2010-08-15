@@ -1,4 +1,6 @@
+#pragma once
 #include <string>
+#include "Function.h"
 
 struct Vector2
 {
@@ -27,63 +29,44 @@ struct Ratio
 	double Evaluate( void );
 };
 
-//struct Number
-//{ // a wrapper if we ever end up needing it -
-//  // I only wanted to add a stupid exponentiation operater...
-//	double value;
-//	Number operator+( Number operand );
-//	Number operator-( Number operand );
-//	Number operator*( Number operand );
-//	Number operator/( Number operand );
-//	Number operator^( Number operand );
-//	Number operator+( double operand );
-//	Number operator-( double operand );
-//	Number operator*( double operand );
-//	Number operator/( double operand );
-//	Number operator^( double operand );
-//	double ToDouble();
-//};
-//struct Function
-//{
-//	Function(std::string definition, char variable); // constructor
-//	std::string definition;
-//	char variable;
-//	void GetValues();
-//	double Evaluate(double parameter);
-//private:
-//	std::string working_definition;
-//	double parameter;
-//	double val_at_parameter;
-//	// recurse all of these to eliminate all occurances
-//	bool Validate();
-//	void PerformFunctions();
-//	void PerformParanthesis();
-//	void PerformExponentiation();
-//	void PerformMultiplicationAndDivision();
-//	void PerformAdditionAndSubtraction();
-//
-//	void Reset();
-//};
+struct Number
+{ // a wrapper if we ever end up needing it -
+  // I only wanted to add a stupid exponentiation operater...
+	double value;
+	Number operator+( Number operand );
+	Number operator-( Number operand );
+	Number operator*( Number operand );
+	Number operator/( Number operand );
+	Number operator^( Number operand );
+	Number operator+( double operand );
+	Number operator-( double operand );
+	Number operator*( double operand );
+	Number operator/( double operand );
+	Number operator^( double operand );
+	double ToDouble();
+};
 
-//struct Function_s
-//{
-//	Function_s(char definition[], char variable); // constructor
-//	char definition[];
-//	char variable;
-//	void GetValues();
-//	double Evaluate(double parameter);
-//private:
-//	char working_definition[];
-//	double parameter;
-//	double val_at_parameter;
-//	// recurse all of these to eliminate all occurances
-//	bool Validate();
-//	void StripSpaces(); // May need this...
-//	void PerformFunctions(); // such as sin(), cot(), log(), ln(), etc.
-//	void PerformParanthesis(); // (5+4) * 5 --> 9*5
-//	void PerformExponentiation();
-//	void PerformMultiplicationAndDivision();
-//	void PerformAdditionAndSubtraction();
-//
-//	void Reset();
-//};
+#if 1
+struct Function_s
+{
+	Function_s(char definition[], char variable); // constructor
+	string definition;
+	char variable;
+	void GetValues();
+	double Evaluate(double parameter);
+private:
+	string working_definition;
+	double parameter;
+	double val_at_parameter;
+	// recurse all of these to eliminate all occurances
+	bool Validate();
+	void StripSpaces(); // May need this...
+	void PerformFunctions(); // such as sin(), cot(), log(), ln(), etc.
+	void PerformParanthesis(); // (5+4) * 5 --> 9*5
+	void PerformExponentiation();
+	void PerformMultiplicationAndDivision();
+	void PerformAdditionAndSubtraction();
+
+	void Reset();
+};
+#endif

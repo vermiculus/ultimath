@@ -94,8 +94,8 @@ void Function::StripWhiteSpace(void)
 
 void Function::InsertArgument(void)
 {
-	char arg[255];
-	sprintf_s(arg, "(%f)", this->argument); // need to improve preservation of the integrity of the argument (double => float)
+	char arg[256];
+	sprintf(arg, "(%15.10f)", this->argument); // need to improve preservation of the integrity of the argument (double => float)
 	//this->definition = replace(this->definition, "x", arg);
 	int pos = 0;
 	while ((pos = this->definition.find(this->parameter, pos)) != -1) 

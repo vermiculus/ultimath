@@ -51,7 +51,7 @@ public:
 
 	void Display(); // primarily for debugging purposes
 private:
-	const enum OPERATOR {
+	typedef enum OPERATOR {
 		ADD = '+',
 		SUBTRACT = '-',
 		MULTIPLY = '*',
