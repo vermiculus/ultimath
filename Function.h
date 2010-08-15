@@ -5,30 +5,6 @@
 
 using namespace std;
 
-//struct CString
-//{
-//	CString(char string[])
-//	{
-//		this->value = strdup(string);
-//		/*for(unsigned int index = 0; index < strlen(string); ;)
-//		{
-//			this->value[index] = string;
-//		}*/
-//	}
-//	char value[];
-//};
-
-//std::string substring(std::string str, unsigned int start, unsigned int end)
-//{
-//	int length = str.length();
-//	std::string result;
-//	for(int index = start - 1; index < end; index++)
-//	{
-//		result.append(1, str[index]);
-//	}
-//	return result;
-//}
-
 double sec(double argument);
 double csc(double argument);
 double cot(double argument);
@@ -63,14 +39,6 @@ private:
 		LPAREN = '(',
 		DECIMAL = '.'
 	};
-	/*enum FUNCTION { // is there any way to make an enumeration of strings or char[] ?
-		SINE, // = "sin",
-		COSINE, // = "cos",
-		TANGENT, // = "tan",
-		SECANT, // = "sec",
-		COSECANT, // = "csc",
-		COTANGENT, // = "cot"
-	};*/
 
 	string working_definition; // unknown use - leftover possibly from previous versions - will look into this
 	// recurse all of these to eliminate all occurances
