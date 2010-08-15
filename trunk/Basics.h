@@ -45,28 +45,3 @@ struct Number
 	Number operator^( double operand );
 	double ToDouble();
 };
-
-#if 1 // what? wouldn't this always evaluate to true?
-struct Function_s
-{
-	Function_s(char definition[], char variable); // constructor
-	string definition;
-	char variable;
-	void GetValues();
-	double Evaluate(double parameter);
-private:
-	string working_definition;
-	double parameter;
-	double val_at_parameter;
-	// recurse all of these to eliminate all occurances
-	bool Validate();
-	void StripSpaces(); // May need this...
-	void PerformFunctions(); // such as sin(), cot(), log(), ln(), etc.
-	void PerformParanthesis(); // (5+4) * 5 --> 9*5
-	void PerformExponentiation(); // etc.
-	void PerformMultiplicationAndDivision();
-	void PerformAdditionAndSubtraction();
-
-	void Reset(); // what???
-}; // I'm still unsure of why we kept this if we were deleting redundencies
-#endif
