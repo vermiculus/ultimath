@@ -19,3 +19,17 @@ Currently working on a parser that will take a string and convert it into a func
 <li>Compile a list of formulas (string representation - the same way you would input it into a handheld calculator</li>
 <li>Add more goals. :D </li>
 </ul>
+
+= Instructions for Download/Upload =
+<ol>
+<li>Download TortoiseSVN installer from http://tortoisesvn.net/downloads</li>
+<li>Run the installer then restart your PC</li>
+<li>Sign in to Google Code. Go to Profile->Settings. Take a note of this password. This is distinct from the password you sign in with.</li>
+<li>Select or create a directory that you want to check out the source code to. Right click and select TortoiseSVN->Checkout.</li>
+<li>A dialoge box will ask you for the URL of the repository. Enter https://ultimath.googlecode.com/svn/trunk/ (if you're not a project member you can check out anonomously - replace https with http)</li>
+<li>Hit OK. You'll be asked for authentication. Enter your google username and the password from step 3.</li>
+<li>You should now have a local version of the engine. A little green tick is added to the folder icon to show that it a fresh checked out version.</li>
+<li>Periodically you should update your local version to get the latest changes. To do this, right click on your directory and select SVN Update.</li>
+<li>This is just a quick start guide. You can upload any changes you make to the code using SVN commit, but if you are not familar with SVN please refer to the manual before attempting this.</li>
+<li>Adapted from http://code.google.com/p/imos-toolbox/wiki/tortoiseSVN</li>
+</ol>
