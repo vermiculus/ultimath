@@ -41,8 +41,6 @@ double Function::Evaluate(double argument)
 		return 0;
 	}
 
-	//needs to replace val for var
-
 	this->StripWhiteSpace();
 	this->Display(); //debugging
 

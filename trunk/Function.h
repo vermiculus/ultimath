@@ -72,7 +72,7 @@ private:
 		COTANGENT, // = "cot"
 	};*/
 
-	string working_definition;
+	string working_definition; // unknown use - leftover possibly from previous versions - will look into this
 	// recurse all of these to eliminate all occurances
 	bool Validate();
 	void StripWhiteSpace(); // 2 x, 2 ( x + 5 ) -> 2x, 2(x+5)
