@@ -1,0 +1,21 @@
+#summary Welcome, introduction, goal, and plan.
+
+= Introduction =
+
+Thanks for taking a look at Ultimath! Ultimath is a project still in active development that can provide the backbone for any project, game, statistical program, or anything that needs some serious number-crunching power.
+
+= Goal =
+
+Ultimath is intended to be an open-source, easy to understand, well-documented C++ mathematical engine. Ultimath will hopefully be used in future applications including physics engines, games, statistical programs, educational programs, and a host of other projects that need a versatile, extensible engine.
+
+= Status =
+
+Currently working on a parser that will take a string and convert it into a function. This way arrays/enumerations of strings can be created off hand and used effectively - much better than creating a new method for each function, which is how this project started.
+
+= Plan =
+
+<ul>
+<li>Complete Parser</li>
+<li>Compile a list of formulas (string representation - the same way you would input it into a handheld calculator<li>
+<li>Add more goals. :D </li>
+</ul>
