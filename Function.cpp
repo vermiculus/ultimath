@@ -128,16 +128,27 @@ void Function::ParseImpliedMultiplication(void)
 			Skip this char
 	}
 	*/
+
+	// Since apparantly we need a constant to compare against. This statement is explained later in the function.
 	char parameter(this->parameter);
+
+	// Here we set up a basic string iterater. What that means is this 'for' loop is using it's index to point to a character in the string.
+	// but in the conditional section (the middle part) we post the condition that the index must be less than the length of our string,
+	// otherwise we will start referencing characters that simply aren't there - you can see where that would have a porblem compiling. :)
 	for(unsigned int index = 0; index < this->definition.length(); index++)
 	{
+		// Here we declare some variables - you will see their use later on in the function.
 		char prevchar, thischar(this->definition[index]), nextchar;
 		bool insert_before, insert_after, do_nothing;
 
+		// This line sets "thischar" to the character located at the index of the loop.
 		thischar = this->definition[index];
+		// As long as this isn't the first character in the string (i.e. the index isn't zero), we give the value of the previous character to "prevchar"
 		if(index != 0) prevchar = this->definition[index-1];
+		// As long as this isn't the last character in the string, we give the value of the next character to "nextchar"
 		if(index != this->definition.length() - 1) nextchar = this->definition[index+1];
 
+		// If this character is an operator, skip the character. We are only interested in numbers and variables.
 		if( thischar == OPERATOR::ADD ||
 			thischar == OPERATOR::DECIMAL ||
 			thischar == OPERATOR::DIVIDE ||
@@ -149,51 +160,24 @@ void Function::ParseImpliedMultiplication(void)
 			thischar == OPERATOR::RPAREN ||
 			thischar == OPERATOR::SUBTRACT)
 			continue;
+
+		// If this character is a digit (0, 1, 2, ..., 9), perform additional tests. (See comments below)
 		if(isdigit(thischar))
 		{
+			// If both the previous character and the next character are digits (such as the substring "123"), set "do_nothing" to true.
 			if(isdigit(prevchar) && isdigit(nextchar))
 				do_nothing = true;
+			// If only the next char is a digit (such as the substring "x23"), set "insert_before" to true.
 			if(!isdigit(prevchar) && isdigit(nextchar))
 				insert_before = true;
+			// If only the previous char is a digit (such as the substring "12x"), set "insert_after" to true.
 			if(isdigit(prevchar) && !isdigit(nextchar))
 				insert_after = true;
+			// If only the next char is a left parens (such as the substring "12("), set "insert_after" to true.
+			if(nextchar == OPERATOR::LPAREN)
+				insert_after = true;
+			//STILL WORKING ON THIS :) Gotta go to work today - or rather in seven hours haha
 		}
-
-		/*if(this->definition[index] == this->parameter)
-		{
-			if(index==0) // if at the beginning
-			{
-				if(this->definition[index+1] == '(' || isdigit(this->definition[index+1])) // if the next char is ( or a digit
-				{
-					if(this->definition[index] != '*') // if the previous char is not MULTIPLY
-					{
-						this->definition.insert(index+1, "*"); // insert an asterisk
-						index--;
-					}
-				}
-			}
-		}
-		else // if somewhere in the middle
-		{
-			if(this->definition[index-1] != '*')
-			{
-				this->definition.insert(index, "*");
-				index++; 
-			}
-			if(index+1==this->definition.length())
-				return; // here is the snippet of corrective code - but this project would still benefit from a complete makeover.
-			if(this->definition[index+1] == '(' || isdigit(this->definition[index+1]))
-			{ // always throws a 'subcript out of range' error - can't seem to fix.
-				this->definition.insert(index+1, "*");
-				index--;
-			} 
-			if(this->definition[index+1] == ')' && isdigit(this->definition[index+2]))
-			{
-				this->definition.insert(index+2, "*");
-				index--;
-			}
-		}*/
-		
 	}
 }
 
