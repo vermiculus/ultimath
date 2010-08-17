@@ -112,6 +112,10 @@ void Function::ParseImpliedMultiplication(void)
 				INSERT_BEFORE
 			If PREVIOUS_CHAR is a DIGIT and NEXT_CHAR is NOT a DIGIT
 				INSERT_AFTER
+			If PREVIOUS_CHAR is an RPAREN
+				INSERT_BEFORE
+			If NEXT_CHAR is an LPAREN
+				INSERT_AFTER
 		If THIS_CHAR is PARAMETER
 			If THIS_CHAR is not FIRST
 				If PREVIOUS CHAR is a RPAREN, DIGIT
@@ -130,7 +134,7 @@ void Function::ParseImpliedMultiplication(void)
 	*/
 
 	// Since apparantly we need a constant to compare against. This statement is explained later in the function.
-	char parameter(this->parameter);
+	//char parameter(this->parameter);
 
 	// Here we set up a basic string iterater. What that means is this 'for' loop is using it's index to point to a character in the string.
 	// but in the conditional section (the middle part) we post the condition that the index must be less than the length of our string,
@@ -138,8 +142,8 @@ void Function::ParseImpliedMultiplication(void)
 	for(unsigned int index = 0; index < this->definition.length(); index++)
 	{
 		// Here we declare some variables - you will see their use later on in the function.
-		char prevchar, thischar(this->definition[index]), nextchar;
-		bool insert_before, insert_after, do_nothing;
+		char prevchar(' '), thischar(this->definition[index]), nextchar(' ');
+		bool insert_before(false), insert_after(false), do_nothing(false);
 
 		// This line sets "thischar" to the character located at the index of the loop.
 		thischar = this->definition[index];
@@ -173,11 +177,38 @@ void Function::ParseImpliedMultiplication(void)
 			// If only the previous char is a digit (such as the substring "12x"), set "insert_after" to true.
 			if(isdigit(prevchar) && !isdigit(nextchar))
 				insert_after = true;
+			// If only the previous char is a right parens (such as the substring ")23"), set "insert_before" to true.
+			if(prevchar == OPERATOR::RPAREN)
+				insert_before = true;
 			// If only the next char is a left parens (such as the substring "12("), set "insert_after" to true.
 			if(nextchar == OPERATOR::LPAREN)
 				insert_after = true;
-			//STILL WORKING ON THIS :) Gotta go to work today - or rather in seven hours haha
 		}
+
+		// if this character is the Function's parameter, perform additional tests. (See comments below)
+		if(thischar==this->parameter)
+		{
+			// If this is not the first character...
+			if(index != 0)
+				// If the previous character is an RPAREN or a DIGIT...
+				if(prevchar == OPERATOR::RPAREN || isdigit(prevchar))
+					// set "insert_after+ to true
+					insert_after = true;
+			// If this is not the last character...
+			if(index != this->definition.length() - 1)
+				// If the next character is an LPAREN or a DIGIT...
+				if(nextchar == OPERATOR::LPAREN || isdigit(nextchar))
+					// set "insert_before" to true
+					insert_before = true;
+		}
+		
+		// Finally, we take action
+		if(do_nothing)
+			continue;
+		if(insert_before)
+			this->definition.insert(index, "*");
+		if(insert_after)
+			this->definition.insert(index+1, "*");
 	}
 }
 
@@ -258,7 +289,7 @@ void Function::PerformMultiplicationAndDivision(void)
 	}
 	
     printf("\nEntering Multiplication and Division Parser");
-    int ArgumentEndIndex(0);
+    ArgumentEndIndex = 0;
     for(unsigned int i = 0; i < this->definition.length(); i++)
     {
 		if(this->definition[i] == MULTIPLY || this->definition[i] == DIVIDE)
