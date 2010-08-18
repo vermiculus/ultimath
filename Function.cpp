@@ -14,7 +14,6 @@ Function::Function(string definition, char parameter)
 	this->parameter = parameter;
 	this->definition = definition;
 }
-
 Function::~Function(void)
 {
 }
@@ -64,6 +63,11 @@ void Function::Display(void)
 bool Function::Validate(void)
 {
 	printf ("Character count: %i\n", this->definition.length());
+	/*
+	do some things like test that the number of LPARENs matches RPARENs
+	test for side-by-side operators (4**5+1--8)
+	make sure every binary operator has to arguments (1+2+3+45+)
+	*/
 	return true; //just for now
 }
 
@@ -134,7 +138,7 @@ void Function::ParseImpliedMultiplication(void)
 	*/
 
 	// Since apparantly we need a constant to compare against. This statement is explained later in the function.
-	//char parameter(this->parameter);
+	// char parameter(this->parameter);
 
 	// Here we set up a basic string iterater. What that means is this 'for' loop is using it's index to point to a character in the string.
 	// but in the conditional section (the middle part) we post the condition that the index must be less than the length of our string,
@@ -251,8 +255,29 @@ void Function::PerformExponentiation(void)
 	//for(unsigned int index = 0; index < this->definition.length(); index++)
 }
 
-void Function::PerformMultiplicationAndDivision(void)
+/*
+Binary Operator Parser (+, -, *, /, ^, more?)
+
+SWITCH CONTINUE(TRUE)
+
+While CONTINUE
 {
+	While iterating through the characters in a string
+		if this is the last character
+			CONTINUE = FALSE
+		if this character is an operator (this should never be the last character per the Function::Validate() function)
+			iterate left until a non-digit is found
+			store index of last digit found [LINDEX]
+			convert the substring from ([LINDEX] up to but not including the operator [INDEX-1]) to a double [LARGUMENT]
+			iterate right until a non-digit is found
+			store index of last digit found [RINDEX]
+			convert the substring from ([RINDEX] up to but not including the operator [INDEX+1]) to a double [RARGUMENT]
+			perform desired operation on [LARGUMENT] and [RARGUMENT] and convert the result to a string
+			remove the substring from [LINDEX] to [RINDEX] and replace it with the resulted string [at INDEX]
+}
+*/
+void Function::PerformMultiplicationAndDivision(void)
+{ // does not reflect new algorithm
 	printf("\nEntered Multiplication and Division Parser");
 	int ArgumentStartIndex(0), ArgumentEndIndex(0);
 	for(unsigned int index = 0; index < this->definition.length(); index++)

@@ -6,9 +6,10 @@ int main( void )
 {
 	cout << "Testing has begun.\n";
 
-	//Insert code here :)
-	Function test("2(4)",'x');
-	test.Evaluate(0);
+	// Insert code here :)
+	Function test("15*45x+8",'x');
+	// ParseImpliedMultiplication still isn't working as expected.
+	test.Evaluate(3);
 
 	cin.sync();
 	cout << "Please press enter to exit.";
