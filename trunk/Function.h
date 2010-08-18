@@ -37,7 +37,7 @@ private:
 		FACTORIAL = '!',
 		RPAREN = ')',
 		LPAREN = '(',
-		DECIMAL = '.'
+		DECIMAL = '.' // need something to handle negatives - possibly '~'
 	};
 
 	string working_definition; // unknown use - leftover possibly from previous versions - will look into this
