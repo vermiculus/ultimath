@@ -4,8 +4,6 @@
 
 Thanks for taking a look at Ultimath! Ultimath is a project still in active development that can provide the backbone for any project, game, statistical program, or anything that needs some serious number-crunching power.
 
-<wiki:gadget url="http://www.ohloh.net/p/gwt/widgets/project_basic_stats.xml" height="220" border="1" />
-
 = Goal =
 
 Ultimath is intended to be an open-source, easy to understand, well-documented C++ mathematical engine. Ultimath will hopefully be used in future applications including physics engines, games, statistical programs, educational programs, and a host of other projects that need a versatile, extensible engine.
