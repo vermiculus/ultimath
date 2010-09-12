@@ -1,6 +1,11 @@
 #include "Basics.h"
 #include "Function.h"
+/*
+SPECIAL GOALS
 
+Add basic variable-base arithmetic (octal math, binary math, etc.)
+
+*/
 /*
 Welcome to Ultimath, the Open Source Number-Crunching,
 String-Parsing, Jello-Eating, Coffee-Drinking Engine.
