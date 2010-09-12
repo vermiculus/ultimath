@@ -1,4 +1,5 @@
 #pragma once
+#include "ultimath.h"
 #include "math.h"
 #include <cmath>
 #include <iostream>
@@ -51,6 +52,7 @@ private:
 	void PerformExponentiation(); // 5^2, 5^3 -> 5*5, 5*5*5
 	void PerformMultiplicationAndDivision(); // 4*8 -> 32
 	void PerformAdditionAndSubtraction(); // 2+2 -> 4
+	Vector2 GetOperands(int indexOfOperator);
 
 	/*
 	let x = 5

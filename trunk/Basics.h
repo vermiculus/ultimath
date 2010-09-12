@@ -4,6 +4,11 @@
 
 struct Vector2
 {
+	//Vector2(int Val1, int Val2)
+	//{
+	//	x = Val1;
+	//	y = Val2;
+	//}
 	double x, y;
 };
 

@@ -1,3 +1,4 @@
+#include "ultimath.h"
 #include "Function.h"
 #include <cmath>
 #include <sstream>
@@ -36,8 +37,8 @@ double Function::Evaluate(double argument)
 	this->InsertArgument();
 	this->Display(); //debugging
 
-	this->ParseImpliedMultiplication();
-	this->Display(); //debugging
+	//this->ParseImpliedMultiplication();
+	//this->Display(); //debugging
 
 	this->PerformFunctions();
 	this->Display(); //you get the idea...
@@ -102,7 +103,7 @@ void Function::InsertArgument(void)
 // ! INFINITE LOOP
 void Function::ParseImpliedMultiplication(void)
 { // instead of if/then - perhaps switches would be better. That way it will loop again once the command is complete.
-	printf("\nEntering Implied Multiplication Parser");
+	//printf("\nEntering Implied Multiplication Parser");
 	/*
 	** Pseudocode
 	** 
@@ -268,6 +269,90 @@ void Function::PerformExponentiation(void)
 	//for(unsigned int index = 0; index < this->definition.length(); index++)
 }
 
+void Function::PerformMultiplicationAndDivision(void)
+{ // does not reflect new algorithm
+	printf("\nEntered Multiplication and Division Parser");
+	//int ArgumentStartIndex(0), ArgumentEndIndex(0);
+	//for(unsigned int index = 0; index < this->definition.length(); index++)
+	//{
+	//	if(this->definition[index] == MULTIPLY || this->definition[index] == DIVIDE)
+	//	{
+	//		double LParam, RParam;
+	//		string Left, Right;
+	//		int temp(0);
+	//		for(unsigned int index2 = index - 1; index2 > 0; index2--)
+	//		{
+	//			if(!(isdigit(this->definition[index2]) || this->definition[index2] == '.')) break;
+	//			Left.insert(0, &this->definition[index2], 1);
+	//			temp = index2;
+	//		}
+	//		if(temp != 0) ArgumentStartIndex = temp - 1;
+	//		else ArgumentStartIndex = temp;
+	//		Left.insert(0, &this->definition[ArgumentStartIndex], 1);
+	//		for(unsigned int index2 = index + 1; index2 < this->definition.length(); index2++)
+	//		{
+	//			if(!(isdigit(this->definition[index2]) || this->definition[index2] == '.')) break;
+	//			Right.append(&this->definition[index2], 1);
+	//			ArgumentEndIndex = index2;
+	//		}
+	//		LParam = strtod(Left.c_str(), NULL);
+	//		RParam = strtod(Right.c_str(), NULL);
+	//		ostringstream ValueOfArgument;
+	//		if(this->definition[index] == MULTIPLY) ValueOfArgument << LParam * RParam << this->definition[ArgumentEndIndex + 1];
+	//		if(this->definition[index] == DIVIDE) ValueOfArgument << LParam / RParam << this->definition[ArgumentEndIndex + 1];
+	//		this->definition.replace(ArgumentStartIndex, ArgumentEndIndex - ArgumentStartIndex + 1, ValueOfArgument.str());
+	//		//                       The argument start index here must be revised - also in {+,-}
+	//		//index--;
+	//	}
+	//}
+	//
+ //   printf("\nEntering Multiplication and Division Parser");
+ //   ArgumentEndIndex = 0;
+ //   for(unsigned int i = 0; i < this->definition.length(); i++)
+ //   {
+	//	if(this->definition[i] == MULTIPLY || this->definition[i] == DIVIDE)
+	//	{
+	//		double LParam, RParam; string Left, Right;
+	//		for(unsigned int j = i - 1; j > 0; j--) //see next comment
+	//		{
+	//			if(!(isdigit(this->definition[j]) || this->definition[j] == DECIMAL)) break;
+	//			Left.insert(0, &this->definition[j], 1);
+	//		}
+	//		Left.insert(0, &this->definition[0], 1); //otherwise we get a member out of range error because j was decremented when it j==0 already...
+	//		for(unsigned int j = i + 1; j < this->definition.length(); j++)
+	//		{
+	//			if(!(isdigit(this->definition[j]) || this->definition[j] == DECIMAL)) break;
+	//			Right.append(&this->definition[j], 1);
+	//			ArgumentEndIndex = j;
+	//		}
+	//		cout << "Left = " << Left << endl;
+	//		cout << "Right = " << Right << endl;
+
+	//		LParam = strtod(Left.c_str(), NULL);
+	//		RParam = strtod(Right.c_str(), NULL);
+
+	//		ostringstream ValueOfArgument;
+	//		ValueOfArgument.setf(ios_base::fixed);
+
+	//		if(this->definition[i] == MULTIPLY) 
+	//			ValueOfArgument << LParam * RParam;
+	//		if(this->definition[i] == DIVIDE) 
+	//			ValueOfArgument << LParam / RParam;
+	//		this->definition.replace(0, ArgumentEndIndex + 1, ValueOfArgument.str());
+	//		i = ValueOfArgument.str().length() - 1;
+
+	//		cout << "ValueOfArgument = " << ValueOfArgument.str() << endl;
+	//		cout << "ops = " << this->definition << endl << endl;
+	//	}
+	//}
+	for(int index = 0; index < this->definition.length(); index++)
+	{
+		if(this->definition[index]==OPERATOR::MULTIPLY
+	}
+}
+
+Vector2 Function::GetOperands(int indexOfOperator)
+{
 /*
 Binary Operator Parser (+, -, *, /, ^, more?)
 
@@ -277,8 +362,8 @@ While CONTINUE
 {
 	While iterating through the characters in a string
 		if this is the last character
-			CONTINUE = FALSE
-		if this character is an operator (this should never be the last character per the Function::Validate() function)
+			Stop
+		if this character is an operator (this should never be the last character per the Function::Validate() function; to be written)
 			iterate left until a non-digit is found
 			store index of last digit found [LINDEX]
 			convert the substring from ([LINDEX] up to but not including the operator [INDEX-1]) to a double [LARGUMENT]
@@ -289,82 +374,9 @@ While CONTINUE
 			remove the substring from [LINDEX] to [RINDEX] and replace it with the resulted string [at INDEX]
 }
 */
-void Function::PerformMultiplicationAndDivision(void)
-{ // does not reflect new algorithm
-	printf("\nEntered Multiplication and Division Parser");
-	int ArgumentStartIndex(0), ArgumentEndIndex(0);
-	for(unsigned int index = 0; index < this->definition.length(); index++)
-	{
-		if(this->definition[index] == MULTIPLY || this->definition[index] == DIVIDE)
-		{
-			double LParam, RParam;
-			string Left, Right;
-			int temp(0);
-			for(unsigned int index2 = index - 1; index2 > 0; index2--)
-			{
-				if(!(isdigit(this->definition[index2]) || this->definition[index2] == '.')) break;
-				Left.insert(0, &this->definition[index2], 1);
-				temp = index2;
-			}
-			if(temp != 0) ArgumentStartIndex = temp - 1;
-			else ArgumentStartIndex = temp;
-			Left.insert(0, &this->definition[ArgumentStartIndex], 1);
-			for(unsigned int index2 = index + 1; index2 < this->definition.length(); index2++)
-			{
-				if(!(isdigit(this->definition[index2]) || this->definition[index2] == '.')) break;
-				Right.append(&this->definition[index2], 1);
-				ArgumentEndIndex = index2;
-			}
-			LParam = strtod(Left.c_str(), NULL);
-			RParam = strtod(Right.c_str(), NULL);
-			ostringstream ValueOfArgument;
-			if(this->definition[index] == MULTIPLY) ValueOfArgument << LParam * RParam << this->definition[ArgumentEndIndex + 1];
-			if(this->definition[index] == DIVIDE) ValueOfArgument << LParam / RParam << this->definition[ArgumentEndIndex + 1];
-			this->definition.replace(ArgumentStartIndex, ArgumentEndIndex - ArgumentStartIndex + 1, ValueOfArgument.str());
-			//                       The argument start index here must be revised - also in {+,-}
-			index--;
-		}
-	}
-	
-    printf("\nEntering Multiplication and Division Parser");
-    ArgumentEndIndex = 0;
-    for(unsigned int i = 0; i < this->definition.length(); i++)
-    {
-		if(this->definition[i] == MULTIPLY || this->definition[i] == DIVIDE)
-		{
-			double LParam, RParam; string Left, Right;
-			for(unsigned int j = i - 1; j > 0; j--) //see next comment
-			{
-				if(!(isdigit(this->definition[j]) || this->definition[j] == DECIMAL)) break;
-				Left.insert(0, &this->definition[j], 1);
-			}
-			Left.insert(0, &this->definition[0], 1); //otherwise we get a member out of range error because j was decremented when it j==0 already...
-			for(unsigned int j = i + 1; j < this->definition.length(); j++)
-			{
-				if(!(isdigit(this->definition[j]) || this->definition[j] == DECIMAL)) break;
-				Right.append(&this->definition[j], 1);
-				ArgumentEndIndex = j;
-			}
-			cout << "Left = " << Left << endl;
-			cout << "Right = " << Right << endl;
+	Vector2 Return;//(5,2);
 
-			LParam = strtod(Left.c_str(), NULL);
-			RParam = strtod(Right.c_str(), NULL);
-
-			ostringstream ValueOfArgument;
-			ValueOfArgument.setf(ios_base::fixed);
-
-			if(this->definition[i] == MULTIPLY) 
-				ValueOfArgument << LParam * RParam;
-			if(this->definition[i] == DIVIDE) 
-				ValueOfArgument << LParam / RParam;
-			this->definition.replace(0, ArgumentEndIndex + 1, ValueOfArgument.str());
-			i = ValueOfArgument.str().length() - 1;
-
-			cout << "ValueOfArgument = " << ValueOfArgument.str() << endl;
-			cout << "ops = " << this->definition << endl << endl;
-		}
-	}
+	return Return;
 }
 
 void Function::PerformAdditionAndSubtraction(void)
