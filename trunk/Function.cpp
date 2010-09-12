@@ -2,6 +2,8 @@
 #include <cmath>
 #include <sstream>
 
+//template< class T > void Debug(T msg) { printf("Debug:%c\n", msg.c_str()); }
+
 Function::Function(char definition[], char parameter)
 {
 	if(isalpha(parameter))
@@ -96,55 +98,63 @@ void Function::InsertArgument(void)
 	}
 }
 
+
+// ! INFINITE LOOP
 void Function::ParseImpliedMultiplication(void)
 { // instead of if/then - perhaps switches would be better. That way it will loop again once the command is complete.
 	printf("\nEntering Implied Multiplication Parser");
 	/*
-	Pseudocode
-
-	BUFFERS PREVIOUS_CHAR, THIS_CHAR, NEXT_CHAR
-	SWITCHES INSERT_BEFORE, INSERT_AFTER, DO_NOTHING
-	
-	While iterating through the characters in the definition
-	{
-		If THIS_CHAR is MULTIPLY
-			skip
-		If this char is a DIGIT
-			If PREVIOUS_CHAR is a DIGIT and NEXT_CHAR is a DIGIT
-				DO_NOTHING
-			If PREVIOUS_CHAR is NOT a DIGIT and NEXT_CHAR is a DIGIT
-				INSERT_BEFORE
-			If PREVIOUS_CHAR is a DIGIT and NEXT_CHAR is NOT a DIGIT
-				INSERT_AFTER
-			If PREVIOUS_CHAR is an RPAREN
-				INSERT_BEFORE
-			If NEXT_CHAR is an LPAREN
-				INSERT_AFTER
-		If THIS_CHAR is PARAMETER
-			If THIS_CHAR is not FIRST
-				If PREVIOUS CHAR is a RPAREN, DIGIT
-					INSERT_BEFORE
-			If THIS_CHAR is not LAST
-				If NEXT CHAR is a LPAREN, DIGIT
-					INSERT_AFTER
-		If INSERT_BEFORE
-			Insert a MULTIPLY before THIS_CHAR
-			DECREMENT ITERATOR
-		If INSERT_AFTER
-			Insert a MULTIPLY after THIS_CHAR
-		If DO_NOTHING
-			Skip this char
-	}
+	** Pseudocode
+	** 
+	** BUFFERS PREVIOUS_CHAR, THIS_CHAR, NEXT_CHAR
+	** SWITCHES INSERT_BEFORE, INSERT_AFTER, DO_NOTHING
+	** 
+	** While iterating through the characters in the definition
+	** {
+	** 	If THIS_CHAR is MULTIPLY
+	** 		skip
+	** 	If this char is a DIGIT
+	** 		If PREVIOUS_CHAR is a DIGIT and NEXT_CHAR is a DIGIT
+	** 			DO_NOTHING
+	** 		If PREVIOUS_CHAR is NOT a DIGIT and NEXT_CHAR is a DIGIT
+	** 			INSERT_BEFORE
+	** 		If PREVIOUS_CHAR is a DIGIT and NEXT_CHAR is NOT a DIGIT
+	** 			INSERT_AFTER
+	** 		If PREVIOUS_CHAR is an RPAREN
+	** 			INSERT_BEFORE
+	** 		If NEXT_CHAR is an LPAREN
+	** 			INSERT_AFTER
+	** 	If THIS_CHAR is PARAMETER
+	** 		If THIS_CHAR is not FIRST
+	** 			If PREVIOUS CHAR is a RPAREN, DIGIT
+	** 				INSERT_BEFORE
+	** 		If THIS_CHAR is not LAST
+	** 			If NEXT CHAR is a LPAREN, DIGIT
+	** 				INSERT_AFTER
+	** 	If INSERT_BEFORE
+	** 		Insert a MULTIPLY before THIS_CHAR
+	** 		DECREMENT ITERATOR
+	** 	If INSERT_AFTER
+	** 		Insert a MULTIPLY after THIS_CHAR
+	** 	If DO_NOTHING
+	** 		Skip this char
+	** }
 	*/
 
-	// Since apparantly we need a constant to compare against. This statement is explained later in the function.
+	// Apparantly we need a 'constant' to compare against. This statement is explained later in the function.
 	// char parameter(this->parameter);
 
-	// Here we set up a basic string iterater. What that means is this 'for' loop is using it's index to point to a character in the string.
-	// but in the conditional section (the middle part) we post the condition that the index must be less than the length of our string,
-	// otherwise we will start referencing characters that simply aren't there - you can see where that would have a porblem compiling. :)
+	/* 
+	** Here we set up a basic string iterater. What that means is this 'for' loop is using it's index to point to a character in the string.
+	** but in the conditional section (the middle part) we post the condition that the index must be less than the length of our string,
+	** otherwise we will start referencing characters that simply aren't there - you can see where that would have a porblem compiling. :)
+	*/
+
 	for(unsigned int index = 0; index < this->definition.length(); index++)
-	{
+	{	
+		//Debug(itoa(index));
+		printf("Debug: %i\n", index);
+
 		// Here we declare some variables - you will see their use later on in the function.
 		char prevchar(' '), thischar(this->definition[index]), nextchar(' ');
 		bool insert_before(false), insert_after(false), do_nothing(false);
@@ -167,6 +177,7 @@ void Function::ParseImpliedMultiplication(void)
 			thischar == OPERATOR::MULTIPLY ||
 			thischar == OPERATOR::RPAREN ||
 			thischar == OPERATOR::SUBTRACT)
+			///is it possible to iterate through an enumeration?
 			continue;
 
 		// If this character is a digit (0, 1, 2, ..., 9), perform additional tests. (See comments below)
@@ -177,10 +188,12 @@ void Function::ParseImpliedMultiplication(void)
 				do_nothing = true;
 			// If only the next char is a digit (such as the substring "x23"), set "insert_before" to true.
 			if(!isdigit(prevchar) && isdigit(nextchar))
-				insert_before = true;
+				if(prevchar!=' ')
+					insert_before = true;
 			// If only the previous char is a digit (such as the substring "12x"), set "insert_after" to true.
 			if(isdigit(prevchar) && !isdigit(nextchar))
-				insert_after = true;
+				if(nextchar!=' ')
+					insert_after = true;
 			// If only the previous char is a right parens (such as the substring ")23"), set "insert_before" to true.
 			if(prevchar == OPERATOR::RPAREN)
 				insert_before = true;
@@ -209,10 +222,10 @@ void Function::ParseImpliedMultiplication(void)
 		// Finally, we take action
 		if(do_nothing)
 			continue;
-		if(insert_before)
-			this->definition.insert(index, "*");
-		if(insert_after)
-			this->definition.insert(index+1, "*");
+		if(insert_before && prevchar != OPERATOR::MULTIPLY)
+			this->definition.insert(index, "" + OPERATOR::MULTIPLY);
+		if(insert_after && nextchar != OPERATOR::MULTIPLY)
+			this->definition.insert(index+1, "" + OPERATOR::MULTIPLY);
 	}
 }
 

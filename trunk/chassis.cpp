@@ -1,4 +1,6 @@
 #include "ultimath.h"
+#include <vector>
+
 // This chassis would be pointless without it.
 // This header file is a collection of the seperate components of the Ultimath Engine.
 
@@ -6,10 +8,14 @@ int main( void )
 {
 	cout << "Testing has begun.\n";
 
-	// Insert code here :)
-	Function test("15*45x+8",'x');
-	// ParseImpliedMultiplication still isn't working as expected.
-	test.Evaluate(3);
+	vector<long unsigned int> collection(2,1);
+	
+	for(int index = 2; index < 64; index++)
+		collection.insert(collection.end(), collection[index-2] + collection[index-1]);
+
+	for(int index = 0; index < collection.size(); index++)
+		//cout << collection[index] << " ";
+		printf("%10i\n", collection[index]);
 
 	cin.sync();
 	cout << "Please press enter to exit.";
