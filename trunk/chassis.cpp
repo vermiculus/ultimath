@@ -1,8 +1,8 @@
 #include "ultimath.h"
-#include <vector>
-
 // This chassis would be pointless without it.
 // This header file is a collection of the seperate components of the Ultimath Engine.
+
+#include <vector>
 
 int main( void )
 {
@@ -11,7 +11,8 @@ int main( void )
 	//shortest Fibonacci sequencer I've ever written 8)
 	vector<long unsigned int> collection(2,1);
 	for(int index = 2; index < 64; index++)
-		collection.insert(collection.end(), collection[index-2] + collection[index-1]);
+		collection.insert(collection.end(),
+			collection[index-2] + collection[index-1]);
 
 	for(int index = 0; index < collection.size(); index++)
 		//cout << collection[index] << " ";

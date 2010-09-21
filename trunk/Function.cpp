@@ -345,13 +345,14 @@ void Function::PerformMultiplicationAndDivision(void)
 	//		cout << "ops = " << this->definition << endl << endl;
 	//	}
 	//}
-	for(int index = 0; index < this->definition.length(); index++)
-	{
-		if(this->definition[index]==OPERATOR::MULTIPLY
-	}
+	//for(int index = 0; index < this->definition.length(); index++)
+	//{
+	//	if(this->definition[index]==OPERATOR::MULTIPLY)
+	//		this->GetOperands(index)
+	//}
 }
 
-Vector2 Function::GetOperands(int indexOfOperator)
+double Function::DoBinary(int indexOfOperator, OPERATOR op)
 {
 /*
 Binary Operator Parser (+, -, *, /, ^, more?)
@@ -374,9 +375,25 @@ While CONTINUE
 			remove the substring from [LINDEX] to [RINDEX] and replace it with the resulted string [at INDEX]
 }
 */
-	Vector2 Return;//(5,2);
+	/*switch(op)
+	{
+		case ADD:
+		case SUBTRACT:
+		case MULTIPLY:
+		case DIVIDE:
+		case MODULUS:
+	}*/
+	return 0;//returnme;
+}
 
-	return Return;
+int Function::GetLeftOperand(int index)
+{
+	string left_op = "";
+	for( /*uses index provided in arg list*/ ; index >= 0; index--)
+	{
+		//leftop.
+	}
+	return 0;
 }
 
 void Function::PerformAdditionAndSubtraction(void)

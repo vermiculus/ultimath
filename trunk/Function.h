@@ -40,7 +40,8 @@ private:
 		LPAREN = '(',
 		DECIMAL = '.' // need something to handle negatives - possibly '~'
 	};
-
+	
+	struct arg_pair {double one,two;};
 	string working_definition; // unknown use - leftover possibly from previous versions - will look into this
 	// recurse all of these to eliminate all occurances
 	bool Validate();
@@ -52,8 +53,9 @@ private:
 	void PerformExponentiation(); // 5^2, 5^3 -> 5*5, 5*5*5
 	void PerformMultiplicationAndDivision(); // 4*8 -> 32
 	void PerformAdditionAndSubtraction(); // 2+2 -> 4
-	Vector2 GetOperands(int indexOfOperator);
-
+	double DoBinary(int indexOfOperator, OPERATOR op);
+	int Function::GetLeftOperand(int indexOfOperator);
+	int Function::GetRightOperand(int indexOfOperator);
 	/*
 	let x = 5
 	INPUT: 2 sin ( 3x - (1/2) 4 + 9^2 +3)
