@@ -84,6 +84,7 @@ namespace Sandbox
         private void Tokenize()
         {
             string arg_buffer = "";
+            char _c = ' ';
             Arg_Types type_buffer = Arg_Types.Void;
             foreach (char c in this.Definition)
             {
@@ -104,8 +105,17 @@ namespace Sandbox
                     arg_list.Add(buf);
                     arg_buffer = c.ToString();
                     type_buffer = Arg_Type_Of(c);
+                    _c = c;
                 }
             }
+
+            Arg_Part buffer;
+            buffer.value = arg_buffer;
+            buffer.classification = type_buffer;
+
+            arg_list.Add(buffer);
+            arg_buffer = _c.ToString();
+            type_buffer = Arg_Type_Of(_c);
         }
 
         public double Evaluate(double argument)
