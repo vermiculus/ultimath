@@ -14,7 +14,7 @@ namespace Sandbox
         private string definition;
         private char parameter;
 
-        
+
         Arg_Types Arg_Type_Of(char c)
         {
             const string _operators = "+-*/^%!";
@@ -45,7 +45,56 @@ namespace Sandbox
         {
             new Arg_Part("", Arg_Types.Void)
         };
-        
+
+        private void Tokenize()
+        {
+            string arg_buffer = "";
+            Arg_Types type_buffer = Arg_Types.Void;
+            foreach (char c in this.Definition)
+            {
+                if (type_buffer == Arg_Types.Void)
+                {
+                    type_buffer = Arg_Type_Of(c);
+                    arg_buffer += c;
+                    continue;
+                }
+                if (type_buffer == Arg_Type_Of(c))
+                    arg_buffer += c;
+
+                if ((type_buffer != Arg_Type_Of(c)) || (this.Definition[this.Definition.Length - 1] == c))
+                {
+                    Arg_Part buf = new Arg_Part(arg_buffer, type_buffer);
+
+                    if (buf.classification == Arg_Types.Operator && buf.value.Length > 1)
+                        throw new InvalidOperationException("Two or more operators were found adjacent to each another: not allowed!");
+
+                    arg_list.Add(buf);
+                    arg_buffer = c.ToString();
+                    type_buffer = Arg_Type_Of(c);
+                }
+            }
+        }
+
+        private double eval(List<Arg_Part> ops, double arg)
+        {
+            double value = Double.NaN;
+
+            return value;
+        }
+
+        #region Do Work, Son!
+
+        private void ParseImpliedMultiplication(ref List<Arg_Part> ops)
+        {
+            for (int index = 0; index < ops.Count; index++)
+            {
+                if (((ops[index].classification == Arg_Types.Constant) || (ops[index + 1].classification == Arg_Types.Variable)) && ((ops[index].classification == Arg_Types.Variable) || (ops[index + 1].classification == Arg_Types.Constant)))
+                    ops.Insert(index + 1, new Arg_Part("*", Arg_Types.Operator));
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Public
@@ -81,57 +130,10 @@ namespace Sandbox
             this.Tokenize();
         }
 
-        private void Tokenize()
-        {
-            string arg_buffer = "";
-            char c = ' ';
-            Arg_Types type_buffer = Arg_Types.Void;
-            for (int i = 0; i < this.Definition.Length; i++)
-            {
-                c = this.definition[i];
-
-                if (type_buffer == Arg_Types.Void)
-                {
-                    type_buffer = Arg_Type_Of(c);
-                    arg_buffer += c;
-
-                    continue;
-                }
-
-
-                if (type_buffer == Arg_Type_Of(c))
-                    arg_buffer += c;
-                if ((type_buffer != Arg_Type_Of(c)) || (this.Definition[this.Definition.Length-1] == c))
-                {
-                    Arg_Part buf;
-                    buf.value = arg_buffer;
-                    buf.classification = type_buffer;
-
-                    arg_list.Add(buf);
-                    arg_buffer = c.ToString();
-                    type_buffer = Arg_Type_Of(c);
-
-                }
-            }
-
-            if (arg_buffer.Length == 1)
-            {
-                Arg_Part buf;
-                buf.value = arg_buffer;
-                buf.classification = type_buffer;
-
-                arg_list.Add(buf);
-            }
-
-        }
-
         public double Evaluate(double argument)
         {
             double value = double.NaN;
-            for (int i = 0; i < this.arg_list.Count; i++)
-            {
-                // could have used foreach, but wouldn't give me control over iteration
-            }
+
             return value;
         }
         #endregion
