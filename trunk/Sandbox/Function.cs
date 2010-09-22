@@ -78,6 +78,11 @@ namespace Sandbox
             definition = Def;
             parameter = Param;
 
+            this.Tokenize();
+        }
+
+        private void Tokenize()
+        {
             string arg_buffer = "";
             Arg_Types type_buffer = Arg_Types.Void;
             foreach (char c in this.Definition)
@@ -103,6 +108,15 @@ namespace Sandbox
             }
         }
 
+        public double Evaluate(double argument)
+        {
+            double value = double.NaN;
+            for (int i = 0; i < this.arg_list.Count; i++)
+            {
+                // could have used foreach, but wouldn't give me control over iteration
+            }
+            return value;
+        }
         #endregion
         #region Groupers
         public enum Arg_Types
