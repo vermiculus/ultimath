@@ -86,20 +86,20 @@ namespace Sandbox
                 {
                     type_buffer = Arg_Type_Of(c);
                     arg_buffer += c;
+                    continue;
                 }
                 if (type_buffer == Arg_Type_Of(c))
                     arg_buffer += c;
-                else
+                if ((type_buffer != Arg_Type_Of(c)) || (this.Definition[this.Definition.Length - 1] == c))
                 {
                     Arg_Part buf;
                     buf.value = arg_buffer;
                     buf.classification = type_buffer;
 
                     arg_list.Add(buf);
-                    arg_buffer = "";
-                    type_buffer = Arg_Types.Void;
+                    arg_buffer = c.ToString();
+                    type_buffer = Arg_Type_Of(c);
                 }
-
             }
         }
 

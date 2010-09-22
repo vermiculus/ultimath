@@ -19,11 +19,13 @@ namespace Sandbox
         public void Output(string s)
         {
             txtOut.Text += s;
+            txtOut.SelectionStart = txtOut.Text.Length;
+            txtOut.ScrollToCaret();
         }
         private void btnSubmit_Click(object sender, EventArgs e)
         {
             //MessageBox.Show("You clicked my button!");
-            Output("Testing begun. " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + "\r\nInput: " + '"' + txtIn.Text + '"' + "\r\n");
+            Output("Testing begun. " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + "\r\nInput: " + '"' + txtIn.Text + '"' + "\r\n\r\n");
 
             ////
             Function func = new Function(txtIn.Text, 'x');
@@ -32,6 +34,11 @@ namespace Sandbox
             ////
 
             Output("Testing complete.\r\n\r\n");
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            txtOut.Clear();
         }
     }
 }
