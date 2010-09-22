@@ -84,19 +84,24 @@ namespace Sandbox
         private void Tokenize()
         {
             string arg_buffer = "";
-            char _c = ' ';
+            char c = ' ';
             Arg_Types type_buffer = Arg_Types.Void;
-            foreach (char c in this.Definition)
+            for (int i = 0; i < this.Definition.Length; i++)
             {
+                c = this.definition[i];
+
                 if (type_buffer == Arg_Types.Void)
                 {
                     type_buffer = Arg_Type_Of(c);
                     arg_buffer += c;
+
                     continue;
                 }
+
+
                 if (type_buffer == Arg_Type_Of(c))
                     arg_buffer += c;
-                if ((type_buffer != Arg_Type_Of(c)) || (this.Definition[this.Definition.Length - 1] == c))
+                if ((type_buffer != Arg_Type_Of(c)) || (this.Definition[this.Definition.Length-1] == c))
                 {
                     Arg_Part buf;
                     buf.value = arg_buffer;
@@ -105,17 +110,19 @@ namespace Sandbox
                     arg_list.Add(buf);
                     arg_buffer = c.ToString();
                     type_buffer = Arg_Type_Of(c);
-                    _c = c;
+
                 }
             }
 
-            Arg_Part buffer;
-            buffer.value = arg_buffer;
-            buffer.classification = type_buffer;
+            if (arg_buffer.Length == 1)
+            {
+                Arg_Part buf;
+                buf.value = arg_buffer;
+                buf.classification = type_buffer;
 
-            arg_list.Add(buffer);
-            arg_buffer = _c.ToString();
-            type_buffer = Arg_Type_Of(_c);
+                arg_list.Add(buf);
+            }
+
         }
 
         public double Evaluate(double argument)
