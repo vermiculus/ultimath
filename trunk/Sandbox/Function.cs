@@ -46,7 +46,67 @@ namespace Sandbox
             new Arg_Part("", Arg_Types.Void)
         };
 
-        private void Tokenize()
+        private void clean()
+        {
+            this.Definition = this.Definition.Replace(" ", ""); // Keep this in case I remember anything else we should strip
+        }
+
+        private void Tokenize()//Tokenize_StevensTest
+        {
+            // Strip whitespace
+            clean();
+
+            bool isVariable = false; // To check if we should keep adding to the variable string
+            for (int i = 0; i < this.definition.Length; i++)
+            {
+                char c = definition[i];
+                Arg_Types type = Arg_Type_Of(c);
+
+
+                // If its a variable then lets see if we had a variable last time we went through
+                if (type == Arg_Types.Constant)
+                {
+                    if (isVariable)
+                    {
+                        Arg_Part buf = arg_list[arg_list.Count-1]; // Append to the last argument in the list, our variable
+
+                        buf.value += c;
+                        arg_list[arg_list.Count-1] = buf;
+                    
+                    }   
+                    else                                         // Its a new variable, lets make a new argument and add it to the list
+                    {
+                        isVariable = true;
+
+                        Arg_Part buf = new Arg_Part(c.ToString(), type);
+                       
+                        arg_list.Add(buf);
+                    }
+                }
+                else
+                {
+                    isVariable = false;
+
+                    Arg_Part buf = new Arg_Part(c.ToString(), type);
+                    Arg_Part prevArg = arg_list[arg_list.Count - 1];
+
+                    if (prevArg.classification == Arg_Types.Operator && type == Arg_Types.Operator)
+                        throw new InvalidOperationException("Two or more operators were found adjacent to each another: not allowed! PARADOX!");
+
+                    arg_list.Add(buf);
+                    
+                    
+                }
+
+            }
+
+
+
+        }
+
+        
+
+        private void Tokenize_old()
         {
             string arg_buffer = "";
             Arg_Types type_buffer = Arg_Types.Void;
@@ -102,7 +162,7 @@ namespace Sandbox
         public string Definition
         {
             get { return definition; }
-            //set { definition = value; }
+            set { definition = value; }
         }
 
         public char Parameter
