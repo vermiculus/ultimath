@@ -41,10 +41,7 @@ namespace Sandbox
             }
         };
         // I believe the ICollection is the closest thing to a C# vector
-        public List<Arg_Part> arg_list = new List<Arg_Part>
-        {
-            new Arg_Part("", Arg_Types.Void)
-        };
+        public List<Arg_Part> arg_list = new List<Arg_Part> { };
 
         private void clean()
         {
