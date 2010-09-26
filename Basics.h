@@ -1,4 +1,6 @@
-#pragma once
+#ifndef BASICS_H_
+#define BASICS_H_
+
 #include <string>
 #include "Function.h"
 
@@ -50,3 +52,5 @@ struct Number
 	Number operator^( double operand );
 	double ToDouble();
 };
+
+#endif
