@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ULTIMATH_H_
+#define ULTIMATH_H_
+
 #include "Basics.h"
 #include "Function.h"
 /*
@@ -64,3 +66,5 @@ Function.h
 			void PerformMultiplicationAndDivision();
 			void PerformAdditionAndSubtraction();
 */
+
+#endif

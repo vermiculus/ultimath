@@ -1,4 +1,6 @@
-#pragma once
+#ifndef FUNCTION_H_
+#define FUNCTION_H_
+
 #include "ultimath.h"
 #include "math.h"
 #include <cmath>
@@ -28,7 +30,7 @@ public:
 
 	void Display(); // primarily for debugging purposes
 private:
-	typedef enum OPERATOR {
+	typedef enum{
 		ADD = '+',
 		SUBTRACT = '-',
 		MULTIPLY = '*',
@@ -39,7 +41,7 @@ private:
 		RPAREN = ')',
 		LPAREN = '(',
 		DECIMAL = '.' // need something to handle negatives - possibly '~'
-	};
+	}OPERATOR;
 	
 	struct arg_pair {double one,two;};
 	string working_definition; // unknown use - leftover possibly from previous versions - will look into this
@@ -54,8 +56,8 @@ private:
 	void PerformMultiplicationAndDivision(); // 4*8 -> 32
 	void PerformAdditionAndSubtraction(); // 2+2 -> 4
 	double DoBinary(int indexOfOperator, OPERATOR op);
-	int Function::GetLeftOperand(int indexOfOperator);
-	int Function::GetRightOperand(int indexOfOperator);
+	int GetLeftOperand(int indexOfOperator);
+	int GetRightOperand(int indexOfOperator);
 	/*
 	let x = 5
 	INPUT: 2 sin ( 3x - (1/2) 4 + 9^2 +3)
@@ -77,3 +79,5 @@ private:
 	*/
 
 };
+
+#endif

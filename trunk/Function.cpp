@@ -1,7 +1,10 @@
-#include "ultimath.h"
+//#include "ultimath.h"
 #include "Function.h"
+
 #include <cmath>
 #include <sstream>
+#include <stdio.h>
+#include <stdlib.h>
 
 //template< class T > void Debug(T msg) { printf("Debug:%c\n", msg.c_str()); }
 
@@ -167,17 +170,22 @@ void Function::ParseImpliedMultiplication(void)
 		// As long as this isn't the last character in the string, we give the value of the next character to "nextchar"
 		if(index != this->definition.length() - 1) nextchar = this->definition[index+1];
 
+
 		// If this character is an operator, skip the character. We are only interested in numbers and variables.
-		if( thischar == OPERATOR::ADD ||
-			thischar == OPERATOR::DECIMAL ||
-			thischar == OPERATOR::DIVIDE ||
-			thischar == OPERATOR::EXPONENT ||
-			thischar == OPERATOR::FACTORIAL ||
-			thischar == OPERATOR::LPAREN ||
-			thischar == OPERATOR::MODULUS ||
-			thischar == OPERATOR::MULTIPLY ||
-			thischar == OPERATOR::RPAREN ||
-			thischar == OPERATOR::SUBTRACT)
+		/*@Irrehaare
+		* it used to be OPERATOR::* but it doesnt compile
+		* on gcc so I changed it to Function:ADD
+		* */
+		if( thischar == Function::ADD ||
+			thischar == Function::DECIMAL ||
+			thischar == Function::DIVIDE ||
+			thischar == Function::EXPONENT ||
+			thischar == Function::FACTORIAL ||
+			thischar == Function::LPAREN ||
+			thischar == Function::MODULUS ||
+			thischar == Function::MULTIPLY ||
+			thischar == Function::RPAREN ||
+			thischar == Function::SUBTRACT)
 			///is it possible to iterate through an enumeration?
 			continue;
 
@@ -196,10 +204,10 @@ void Function::ParseImpliedMultiplication(void)
 				if(nextchar!=' ')
 					insert_after = true;
 			// If only the previous char is a right parens (such as the substring ")23"), set "insert_before" to true.
-			if(prevchar == OPERATOR::RPAREN)
+			if(prevchar == Function::RPAREN)
 				insert_before = true;
 			// If only the next char is a left parens (such as the substring "12("), set "insert_after" to true.
-			if(nextchar == OPERATOR::LPAREN)
+			if(nextchar == Function::LPAREN)
 				insert_after = true;
 		}
 
@@ -209,13 +217,13 @@ void Function::ParseImpliedMultiplication(void)
 			// If this is not the first character...
 			if(index != 0)
 				// If the previous character is an RPAREN or a DIGIT...
-				if(prevchar == OPERATOR::RPAREN || isdigit(prevchar))
+				if(prevchar == Function::RPAREN || isdigit(prevchar))
 					// set "insert_after+ to true
 					insert_after = true;
 			// If this is not the last character...
 			if(index != this->definition.length() - 1)
 				// If the next character is an LPAREN or a DIGIT...
-				if(nextchar == OPERATOR::LPAREN || isdigit(nextchar))
+				if(nextchar == Function::LPAREN || isdigit(nextchar))
 					// set "insert_before" to true
 					insert_before = true;
 		}
@@ -223,10 +231,10 @@ void Function::ParseImpliedMultiplication(void)
 		// Finally, we take action
 		if(do_nothing)
 			continue;
-		if(insert_before && prevchar != OPERATOR::MULTIPLY)
-			this->definition.insert(index, "" + OPERATOR::MULTIPLY);
-		if(insert_after && nextchar != OPERATOR::MULTIPLY)
-			this->definition.insert(index+1, "" + OPERATOR::MULTIPLY);
+		if(insert_before && prevchar != Function::MULTIPLY)
+			this->definition.insert(index, "" + Function::MULTIPLY);
+		if(insert_after && nextchar != Function::MULTIPLY)
+			this->definition.insert(index+1, "" + Function::MULTIPLY);
 	}
 }
 
