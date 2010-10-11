@@ -43,36 +43,34 @@ namespace Sandbox
         // I believe the ICollection is the closest thing to a C# vector
         public List<Arg_Part> arg_list = new List<Arg_Part> { };
 
-        private void clean()
+        private void Validate()
         {
             this.Definition = this.Definition.Replace(" ", ""); // Keep this in case I remember anything else we should strip
         }
-
         private void Tokenize()//Tokenize_StevensTest
         {
-            // Strip whitespace
-            clean();
+            // Strip whitespace and check for invalid 
+            Validate();
 
             bool isVariable = false; // To check if we should keep adding to the variable string
-            for (int i = 0; i < this.definition.Length; i++)
-            {
-                char c = definition[i];
-                Arg_Types type = Arg_Type_Of(c);
 
+            for (int index = 0; index < this.definition.Length; index++)
+            {
+                char c = definition[index];
+                Arg_Types type = Arg_Type_Of(c);
 
                 // If its a variable then lets see if we had a variable last time we went through
                 if (type == Arg_Types.Constant)
                 {
                     if (isVariable)
-                    {
-                        Arg_Part buf = arg_list[arg_list.Count-1]; // Append to the last argument in the list, our variable
+                    { // Append to the last argument in the list, our variable
+                        Arg_Part buf = arg_list[arg_list.Count-1]; 
 
                         buf.value += c;
                         arg_list[arg_list.Count-1] = buf;
-                    
                     }   
-                    else                                         // Its a new variable, lets make a new argument and add it to the list
-                    {
+                    else
+                    { // It's a new variable, let's make a new argument and add it to the list
                         isVariable = true;
 
                         Arg_Part buf = new Arg_Part(c.ToString(), type);
@@ -91,19 +89,11 @@ namespace Sandbox
                         throw new InvalidOperationException("Two or more operators were found adjacent to each another: not allowed! PARADOX!");
 
                     arg_list.Add(buf);
-                    
-                    
                 }
-
             }
-
-
-
         }
 
-        
-
-        private void Tokenize_old()
+        private void __Tokenize_old()
         {
             string arg_buffer = "";
             Arg_Types type_buffer = Arg_Types.Void;
@@ -132,20 +122,42 @@ namespace Sandbox
             }
         }
 
-        private double eval(List<Arg_Part> ops, double arg)
-        {
-            double value = Double.NaN;
-
-            return value;
-        }
-
         #region Do Work, Son!
 
+        /// <summary>
+        /// An archetype to perform a binary operation (5+4, 8*46, etc)
+        /// </summary>
+        /// <param name="one">The first operand</param>
+        /// <param name="op">The operator</param>
+        /// <param name="two">The second operand</param>
+        private void DoBinary(Arg_Part one, Operators op, Arg_Part two)
+        {
+            // must provide validation that it is an BINARY OPERATOR
+        }
+
+        /// <summary>
+        /// An archetype to perform a unary operation (5!, etc)
+        /// </summary>
+        /// <param name="arg">The operand</param>
+        /// <param name="op">The operater</param>
+        private void DoUnary(Arg_Part arg, Operators op)
+        {
+            // must provide validation that it is an UNARY OPERATOR
+        }
+
+        /// <summary>
+        /// Status: Complete
+        /// Insert implied operators in the arg_list so that 2x becomes 2*x
+        /// </summary>
+        /// <param name="ops">The collection of Arg_Parts to perform the operation on. This may become obselete as we optimize.</param>
         private void ParseImpliedMultiplication(ref List<Arg_Part> ops)
         {
-            for (int index = 0; index < ops.Count; index++)
+            for (int index = 0; index < ops.Count-1; index++)
             {
-                if (((ops[index].classification == Arg_Types.Constant) || (ops[index + 1].classification == Arg_Types.Variable)) && ((ops[index].classification == Arg_Types.Variable) || (ops[index + 1].classification == Arg_Types.Constant)))
+                // if ConstantVariable OR VariableConstant
+                // may want to revise so that VariableConstant is parsed as Variable^Constant
+                if (((ops[index].classification == Arg_Types.Constant) || (ops[index].classification == Arg_Types.Variable)) &&
+                    ((ops[index+1].classification == Arg_Types.Variable) || (ops[index+1].classification == Arg_Types.Constant)))
                     ops.Insert(index + 1, new Arg_Part("*", Arg_Types.Operator));
             }
         }
@@ -185,11 +197,12 @@ namespace Sandbox
             parameter = Param;
 
             this.Tokenize();
+            this.ParseImpliedMultiplication(ref arg_list);
         }
 
         public double Evaluate(double argument)
         {
-            double value = double.NaN;
+            double value = Double.NaN;
 
             return value;
         }
