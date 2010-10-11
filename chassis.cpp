@@ -21,7 +21,7 @@ int main( void )
 	Function f("2*x",'x');
 	cout << f.Evaluate(4);
 	cin.sync();
-	cout << "Please press enter to exit.";
+	cout << "\n\nPlease press enter to exit.";
 	cin.ignore();
 
 	// Did you know? Some DIC member (I forget who at the moment) did a benchmark test
