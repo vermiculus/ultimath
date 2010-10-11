@@ -46,29 +46,21 @@ namespace Sandbox
         {
             public string value;
             public Arg_Types classification;
-            private Operators opType;
+            public Operators opType;
             public Arg_Part(string Value, Arg_Types Classification)
             {
                 value = Value;
                 classification = Classification;
-                if (classification != Arg_Types.Operator)
-            }
-            public Operators getOperatorType() 
-            {
-                if (classification != Arg_Types.Operator)
-                    throw new ArgumentException("To use this function, the Arg_Part must be of type Operator");
-                switch (value)
-                {
-                    case "+": return Operators.ADD;
-                    case "-": return Operators.SUBTRACT;
-                    case "*": return Operators.MULTIPLY;
-                    case "/": return Operators.DIVIDE;
-                    case "%": return Operators.MODULO;
-                    case "^": return Operators.EXPONENT;
-                    case "!": return Operators.FACTORIAL;
-                    default:
-                        return Operators.NULL;
-                }
+                opType = Operators.NULL;
+                if (classification == Arg_Types.Operator) {
+                    switch (value) {
+                        case "+": opType = Operators.ADD; break;
+                        case "-": opType = Operators.SUBTRACT; break;
+                        case "*": opType = Operators.MULTIPLY; break;
+                        case "/": opType = Operators.DIVIDE; break;
+                        case "%": opType = Operators.MODULO; break;
+                        case "^": opType = Operators.EXPONENT; break;
+                        case "!": opType = Operators.FACTORIAL; break; } }
             }
         };
         // I believe the ICollection is the closest thing to a C# vector
@@ -248,7 +240,7 @@ namespace Sandbox
                 throw new ArgumentException("Please provide an unary operator.");
             if (op == Operators.FACTORIAL && (int)Double.Parse(arg.value) != Double.Parse(arg.value))
                 throw new ArgumentException("Factorial requires an integer!");
-            return new Arg_Part((Double.Parse(arg.value)).ToString(), Arg_Types.Constant);
+            return new Arg_Part((Factorial((long)Double.Parse(arg.value))).ToString(), Arg_Types.Constant);
         }
 
 
@@ -258,10 +250,36 @@ namespace Sandbox
             {
                 if (ops[index].classification == Arg_Types.Operator)
                 {
-                    switch (ops[index].classification)
+                    switch (ops[index].opType)
                     {
                         case Operators.ADD:
-
+                            ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.ADD, ops[index + 1]));
+                            ops.RemoveRange(index, 3);
+                            break;
+                        case Operators.SUBTRACT:
+                            ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.SUBTRACT, ops[index + 1]));
+                            ops.RemoveRange(index, 3);
+                            break;
+                        case Operators.MULTIPLY:
+                            ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.MULTIPLY, ops[index + 1]));
+                            ops.RemoveRange(index, 3);
+                            break;
+                        case Operators.DIVIDE:
+                            ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.DIVIDE, ops[index + 1]));
+                            ops.RemoveRange(index, 3);
+                            break;
+                        case Operators.MODULO:
+                            ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.MODULO, ops[index + 1]));
+                            ops.RemoveRange(index, 3);
+                            break;
+                        case Operators.EXPONENT:
+                            ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.EXPONENT, ops[index + 1]));
+                            ops.RemoveRange(index, 3);
+                            break;
+                        case Operators.FACTORIAL:
+                            ops.Insert(index - 1, DoUnary(ops[index - 1], Operators.FACTORIAL));
+                            ops.RemoveRange(index, 2);
+                            break;
                     }
                 }
             }
@@ -303,6 +321,7 @@ namespace Sandbox
 
             this.Tokenize();
             this.ParseImpliedMultiplication(ref arg_list);
+            this.DoConstants(ref arg_list);
         }
 
         public double Evaluate(double argument)
@@ -324,7 +343,7 @@ namespace Sandbox
             Unknown,
             Void
         }
-        enum Operators
+        public enum Operators
         {
             ADD = '+',
             SUBTRACT = '-',
@@ -335,7 +354,7 @@ namespace Sandbox
             FACTORIAL = '!',
             NULL
         }
-        enum Groupers
+        public enum Groupers
         {
             LPAREN = '(',
             RPAREN = ')',
