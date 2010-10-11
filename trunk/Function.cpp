@@ -26,7 +26,7 @@ Function::~Function(void)
 
 double Function::Evaluate(double argument)
 {
-	//this->value = 0;
+	this->value = 0;
 	this->argument = argument;
 	if(!this->Validate())
 	{
@@ -34,6 +34,7 @@ double Function::Evaluate(double argument)
 		return 0;
 	}
 
+	// This step could simply become this->Tokenize();
 	this->StripWhiteSpace();
 	this->Display(); //debugging
 
@@ -74,6 +75,22 @@ bool Function::Validate(void)
 	test for side-by-side operators (4**5+1--8)
 	make sure every binary operator has to arguments (1+2+3+45+)
 	*/
+	int paren_count;
+	for(unsigned i=0;i<this->definition.length();i++) {
+		if(this->definition[i] == '(') {
+			paren_count++;
+		} else if(this->definition[i] == ')') {
+			if(paren_count>0) {
+				paren_count--;
+			} else {
+				return false;
+			}
+		}
+	}
+	if(paren_count > 0) {
+		// There were more ( than )
+		return false;
+	}
 	return true; //just for now
 }
 
@@ -82,7 +99,7 @@ void Function::StripWhiteSpace(void)
 	printf("\nEntering White Space Stripper");
 	for(unsigned int index = 0; index < this->definition.length(); index++)
 	{
-		if(this->definition[index] == ' ')
+		if(this->definition[index] == ' ' || this->definition[index] == '\t')
 		{
 			this->definition.erase(index, 1);
 			index--;
