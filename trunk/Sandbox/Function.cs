@@ -243,7 +243,10 @@ namespace Sandbox
             return new Arg_Part((Factorial((long)Double.Parse(arg.value))).ToString(), Arg_Types.Constant);
         }
 
-
+        /// <summary>
+        /// Sorts out all of our constant operations, if any
+        /// </summary>
+        /// <param name="ops"></param>
         private void DoConstants(ref List<Arg_Part> ops)
         {
             for (int index = 1; index < ops.Count; index++)
@@ -285,6 +288,8 @@ namespace Sandbox
             }
         }
 
+        //private void 
+
         #endregion
 
         #endregion
@@ -321,7 +326,14 @@ namespace Sandbox
 
             this.Tokenize();
             this.ParseImpliedMultiplication(ref arg_list);
-            this.DoConstants(ref arg_list);
+
+            // Sort out our constant operations, if any
+            int before = 0, after = 0;
+            do {
+                before = arg_list.Count;
+                this.DoConstants(ref arg_list);
+                after = arg_list.Count;
+            } while (before != after);
         }
 
         public double Evaluate(double argument)
