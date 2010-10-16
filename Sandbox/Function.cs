@@ -21,9 +21,11 @@ namespace Sandbox
         #region Variable Members
 
         #region Private
-
+        #region Vars, Structs, etc.
         private string definition;
         private char parameter;
+
+        private double argval; // placeholder for the value passed to the function
 
         Arg_Types Arg_Type_Of(char c)
         {
@@ -65,7 +67,8 @@ namespace Sandbox
         };
         // I believe the ICollection is the closest thing to a C# vector
         public List<Arg_Part> arg_list = new List<Arg_Part> { };
-
+#endregion
+        #region Tokenize
         private void Validate()
         {
             this.Definition = this.Definition.Replace(" ", ""); // Keep this in case I remember anything else we should strip
@@ -160,7 +163,7 @@ namespace Sandbox
                 }
             }
         }
-
+        #endregion
         #region Do Work, Son!
 
         /// <summary>
@@ -174,13 +177,14 @@ namespace Sandbox
             {
                 // if ConstantVariable OR VariableConstant
                 // may want to revise so that VariableConstant is parsed as Variable^Constant
-                if (((ops[index].classification == Arg_Types.Constant) && (ops[index+1].classification == Arg_Types.Variable)) ||
-                    ((ops[index].classification == Arg_Types.Variable) && (ops[index+1].classification == Arg_Types.Constant)))
+                if (((ops[index].classification == Arg_Types.Constant) && (ops[index + 1].classification == Arg_Types.Variable)) ||
+                    ((ops[index].classification == Arg_Types.Variable) && (ops[index + 1].classification == Arg_Types.Constant)) ||
+                    ((ops[index].classification == Arg_Types.Constant) && (ops[index + 1].classification == Arg_Types.Grouper)))
                     ops.Insert(index + 1, new Arg_Part("*", Arg_Types.Operator));
             }
         }
 
-        /// <summary>
+        /// <summary> Status: Complete
         /// An archetype to perform a binary operation (5+4, 8*46, etc)
         /// </summary>
         /// <param name="one">The first operand</param>
@@ -288,10 +292,65 @@ namespace Sandbox
             }
         }
 
-        //private void 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ops"></param>
+        private void DoParen(ref List<Arg_Part> ops)
+        {
+              for(int index = 0; index < ops.Count; index++)
+              {
+                    if(ops[index].classification == Arg_Types.Grouper)
+                    {
+                          switch(ops[index].value)
+                          {
+                                case "(":
+                                    int index2 = FindBrother(ops, index);
+                                    // need to have a private Constructor for Function that takes a List of Arg_Parts
+                                    Function inner = new Function(ops.GetRange(index, index2 - index), this.parameter);
+                                    double total_val = inner.Evaluate(this.argval);
+                                    Arg_Part innerVal = new Arg_Part(total_val.ToString(), Arg_Types.Constant);
+                                    ops.RemoveRange(index, index2 - index);
+                                    ops.Insert(index, innerVal);
+                                        break;
+                                case "[":
+                                    // '' likewise ''
+                                        break;
+                                case "{":
+                                    // '' likewise ''
+                                        break;
+                          }
+                    }
+              }
+        }
+
+        private int FindBrother(List<Arg_Part> ops, int i)
+        {
+            Groupers Class = (Groupers)ops[i].value[0];
+            Groupers AntiClass;
+            switch (Class)
+            {
+                case Groupers.LBRACE:
+                    AntiClass = Groupers.RBRACE;
+                    break;
+                case Groupers.LBRACKET:
+                    AntiClass = Groupers.RBRACKET;
+                    break;
+                case Groupers.LPAREN:
+                    AntiClass = Groupers.RPAREN;
+                    break;
+            }
+            uint balance = 1, brother = 0;
+            for (int index = i; index < ops.Count; index++)
+            {
+                if (ops[index].classification == Arg_Types.Grouper)
+                {
+
+                }
+            }
+        }
 
         #endregion
-
         #endregion
 
         #region Public
@@ -321,8 +380,8 @@ namespace Sandbox
         /// <param name="Param">The variable of the function, i.e. 't'</param>
         public Function(string Def, char Param)
         {
-            definition = Def;
-            parameter = Param;
+            this.definition = Def;
+            this.parameter = Param;
 
             this.Tokenize();
             this.ParseImpliedMultiplication(ref arg_list);
@@ -334,6 +393,9 @@ namespace Sandbox
                 this.DoConstants(ref arg_list);
                 after = arg_list.Count;
             } while (before != after);
+        }
+        private Function(List<Arg_Part> ops, char param)
+        {
         }
 
         public double Evaluate(double argument)
