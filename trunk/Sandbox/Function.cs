@@ -340,14 +340,32 @@ namespace Sandbox
                     AntiClass = Groupers.RPAREN;
                     break;
             }
-            uint balance = 1, brother = 0;
+            int balance = 1;
             for (int index = i; index < ops.Count; index++)
             {
                 if (ops[index].classification == Arg_Types.Grouper)
                 {
-
+                    switch (ops[index].value)
+                    {
+                        case "(":
+                        case "{":
+                        case "[":
+                            balance++;
+                            break;
+                        case ")":
+                        case "}":
+                        case "]":
+                            balance--;
+                            break;
+                    }
+                    if (balance == 0)
+                    {
+                        Console.WriteLine(index);
+                        return index;
+                    }
                 }
             }
+            return 0;
         }
 
         #endregion
