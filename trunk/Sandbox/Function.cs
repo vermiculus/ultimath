@@ -44,7 +44,7 @@ namespace Sandbox
                 return Arg_Type.Predefined;
             return Arg_Type.Unknown;
         }
-        public struct Arg_Part
+        public class Arg_Part
         {
             /// <summary>
             /// The string value of the struct.
@@ -102,18 +102,23 @@ namespace Sandbox
         private List<Arg_Part> Tokenize_20101018(string s)
         {
             Validate();
-            List<Arg_Part> r = new List<Arg_Part>();
 
-            for (int index = 0; index < s.Length; index++)
+            // create and prime a List with the first char's Arg_Part representation
+            List<Arg_Part> r = new List<Arg_Part>() { new Arg_Part(s[0].ToString(), Arg_Type_Of(s[0])) };
+
+            for (int index = 1; index < s.Length; index++)
             {
-                char c = s[index], n = ' ', p = ' '; // set temp vals (p = previous, n = next)
-                if (index != 0) p = s[index - 1];
-                if (index != s.Length) n = s[index + 1];
-                Arg_Type t_c = Arg_Type_Of(c);
-                bool shall_I_Append = false;
+                Arg_Part This = new Arg_Part(s[index].ToString(), Arg_Type_Of(s[index]));
 
-                switch (t)
+                try
                 {
+                    // try appending the value of this char's Arg_Part representation
+                    r[r.Count - 1] += This;
+                }
+                catch (ArgumentException)
+                {
+                    // if the classifications are incompatible, add it as a new Arg_Part
+                    r.Add(This);
                 }
             }
 
@@ -297,8 +302,9 @@ namespace Sandbox
         /// Sorts out all of our constant operations, if any
         /// </summary>
         /// <param name="ops"></param>
-        private void DoConstants(ref List<Arg_Part> ops)
+        private List<Arg_Part> DoConstants(List<Arg_Part> ops)
         {
+            this.DoParen(ref ops);
             for (int index = 1; index < ops.Count; index++)
             {
                 if (ops[index].classification == Arg_Type.Operator)
@@ -336,6 +342,11 @@ namespace Sandbox
                     }
                 }
             }
+
+            if (ops.Count == 1)
+                return ops;
+            else
+                return DoConstants(ops);
         }
 
         /// <summary>
@@ -353,7 +364,7 @@ namespace Sandbox
                                 case "(":
                                     int index2 = FindBrother(ops, index);
                                     // need to have a private Constructor for Function that takes a List of Arg_Parts
-                                    Function inner = new Function(ops.GetRange(index, index2 - index), this.parameter);
+                                    Function inner = new Function(ops.GetRange(index, index - index2), this.parameter);
                                     double total_val = inner.Evaluate(this.argval);
                                     Arg_Part innerVal = new Arg_Part(total_val.ToString(), Arg_Type.Constant);
                                     ops.RemoveRange(index, index2 - index);
@@ -431,6 +442,13 @@ namespace Sandbox
             //set { parameter = value; }
         }
 
+        public double Evaluate(double argument)
+        {
+            double value = Double.NaN;
+
+            return value;
+        }
+
         #endregion
 
         #endregion
@@ -447,26 +465,24 @@ namespace Sandbox
             this.definition = Def;
             this.parameter = Param;
 
-            this.Tokenize();
-            this.ParseImpliedMultiplication(ref arg_list);
+            this.arg_list = Tokenize_20101018(this.definition);
 
+            this.ParseImpliedMultiplication(ref this.arg_list);
+
+            this.arg_list = DoConstants(arg_list);
             // Sort out our constant operations, if any
-            int before = 0, after = 0;
-            do {
-                before = arg_list.Count;
-                this.DoConstants(ref arg_list);
-                after = arg_list.Count;
-            } while (before != after);
+            //int before = 0, after = 0;
+            //do {
+            //    before = arg_list.Count;
+            //    this.DoConstants(ref arg_list);
+            //    after = arg_list.Count;
+            //} while (before != after);
         }
         private Function(List<Arg_Part> ops, char param)
         {
-        }
-
-        public double Evaluate(double argument)
-        {
-            double value = Double.NaN;
-
-            return value;
+            this.arg_list = DoConstants(ops);
+            this.ParseImpliedMultiplication(ref this.arg_list);
+            this.parameter = param;
         }
         #endregion
 
