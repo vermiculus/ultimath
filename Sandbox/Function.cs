@@ -27,34 +27,40 @@ namespace Sandbox
 
         private double argval; // placeholder for the value passed to the function
 
-        Arg_Types Arg_Type_Of(char c)
+        Arg_Type Arg_Type_Of(char c)
         {
             const string _operators = "+-*/^%!";
             const string _groupers = "()[]{}";
 
             if (Char.IsDigit(c) || c == '.')
-                return Arg_Types.Constant;
+                return Arg_Type.Constant;
             if (c == this.Parameter)
-                return Arg_Types.Variable;
+                return Arg_Type.Variable;
             if (_operators.Contains(c))
-                return Arg_Types.Operator;
+                return Arg_Type.Operator;
             if (_groupers.Contains(c))
-                return Arg_Types.Grouper;
+                return Arg_Type.Grouper;
             if (c == '#')
-                return Arg_Types.Predefined;
-            return Arg_Types.Unknown;
+                return Arg_Type.Predefined;
+            return Arg_Type.Unknown;
         }
         public struct Arg_Part
         {
+            /// <summary>
+            /// The string value of the struct.
+            /// </summary>
             public string value;
-            public Arg_Types classification;
+            /// <summary>
+            /// Constant, Variable, Grouper, etc.
+            /// </summary>
+            public Arg_Type classification;
             public Operators opType;
-            public Arg_Part(string Value, Arg_Types Classification)
+            public Arg_Part(string Value, Arg_Type Classification)
             {
                 value = Value;
                 classification = Classification;
                 opType = Operators.NULL;
-                if (classification == Arg_Types.Operator) {
+                if (classification == Arg_Type.Operator) {
                     switch (value) {
                         case "+": opType = Operators.ADD; break;
                         case "-": opType = Operators.SUBTRACT; break;
@@ -63,6 +69,25 @@ namespace Sandbox
                         case "%": opType = Operators.MODULO; break;
                         case "^": opType = Operators.EXPONENT; break;
                         case "!": opType = Operators.FACTORIAL; break; } }
+            }
+            public Arg_Part()
+            {
+                value = string.Empty;
+                classification = Arg_Type.Void;
+                opType = Operators.NULL;
+            }
+            public static Arg_Part operator +(Arg_Part a, Arg_Part b)
+            {
+                Arg_Part r = new Arg_Part();
+                if (a.classification == b.classification)
+                {
+                    r.value = a.value + b.value;
+                    r.classification = a.classification;
+                }
+                else
+                    throw new ArgumentException("Operands need to be of the same classification");
+
+                return r;
             }
         };
         // I believe the ICollection is the closest thing to a C# vector
@@ -74,6 +99,26 @@ namespace Sandbox
             this.Definition = this.Definition.Replace(" ", ""); // Keep this in case I remember anything else we should strip
             //this.Definition = this.Definition.Replace("#pi", Math.PI.ToString());
         }
+        private List<Arg_Part> Tokenize_20101018(string s)
+        {
+            Validate();
+            List<Arg_Part> r = new List<Arg_Part>();
+
+            for (int index = 0; index < s.Length; index++)
+            {
+                char c = s[index], n = ' ', p = ' '; // set temp vals (p = previous, n = next)
+                if (index != 0) p = s[index - 1];
+                if (index != s.Length) n = s[index + 1];
+                Arg_Type t_c = Arg_Type_Of(c);
+                bool shall_I_Append = false;
+
+                switch (t)
+                {
+                }
+            }
+
+            return r;
+        }
         private void Tokenize()//Tokenize_StevensTest
         {
             // Strip whitespace and check for invalid 
@@ -84,7 +129,7 @@ namespace Sandbox
             for (int index = 0; index < this.definition.Length; index++)
             {
                 char c = definition[index];
-                Arg_Types type = Arg_Type_Of(c);
+                Arg_Type type = Arg_Type_Of(c);
 
                 // This is the predefined constants parser... its completion level is like -45684%
 
@@ -102,7 +147,7 @@ namespace Sandbox
                 //}
 
                 // If its a variable then lets see if we had a variable last time we went through
-                if (type == Arg_Types.Constant)
+                if (type == Arg_Type.Constant)
                 {
                     if (isVariable)
                     { // Append to the last argument in the list, our variable
@@ -127,7 +172,7 @@ namespace Sandbox
                     Arg_Part buf = new Arg_Part(c.ToString(), type);
                     Arg_Part prevArg = arg_list[arg_list.Count - 1];
 
-                    if (prevArg.classification == Arg_Types.Operator && type == Arg_Types.Operator)
+                    if (prevArg.classification == Arg_Type.Operator && type == Arg_Type.Operator)
                         throw new InvalidOperationException("Two or more operators were found adjacent to each another: not allowed! PARADOX!");
 
                     arg_list.Add(buf);
@@ -138,10 +183,10 @@ namespace Sandbox
         private void __Tokenize_old()
         {
             string arg_buffer = "";
-            Arg_Types type_buffer = Arg_Types.Void;
+            Arg_Type type_buffer = Arg_Type.Void;
             foreach (char c in this.Definition)
             {
-                if (type_buffer == Arg_Types.Void)
+                if (type_buffer == Arg_Type.Void)
                 {
                     type_buffer = Arg_Type_Of(c);
                     arg_buffer += c;
@@ -154,7 +199,7 @@ namespace Sandbox
                 {
                     Arg_Part buf = new Arg_Part(arg_buffer, type_buffer);
 
-                    if (buf.classification == Arg_Types.Operator && buf.value.Length > 1)
+                    if (buf.classification == Arg_Type.Operator && buf.value.Length > 1)
                         throw new InvalidOperationException("Two or more operators were found adjacent to each another: not allowed!");
 
                     arg_list.Add(buf);
@@ -175,12 +220,13 @@ namespace Sandbox
         {
             for (int index = 0; index < ops.Count-1; index++)
             {
-                // if ConstantVariable OR VariableConstant
+                // if ConstantVariable OR VariableConstant OR etc
                 // may want to revise so that VariableConstant is parsed as Variable^Constant
-                if (((ops[index].classification == Arg_Types.Constant) && (ops[index + 1].classification == Arg_Types.Variable)) ||
-                    ((ops[index].classification == Arg_Types.Variable) && (ops[index + 1].classification == Arg_Types.Constant)) ||
-                    ((ops[index].classification == Arg_Types.Constant) && (ops[index + 1].classification == Arg_Types.Grouper)))
-                    ops.Insert(index + 1, new Arg_Part("*", Arg_Types.Operator));
+                if (((ops[index].classification == Arg_Type.Constant) && (ops[index + 1].classification == Arg_Type.Variable)) ||
+                    ((ops[index].classification == Arg_Type.Variable) && (ops[index + 1].classification == Arg_Type.Constant)) ||
+                    ((ops[index].classification == Arg_Type.Constant) && (ops[index + 1].classification == Arg_Type.Grouper)) ||
+                    ((ops[index].classification == Arg_Type.Variable) && (ops[index + 1].classification == Arg_Type.Grouper)))
+                    ops.Insert(index + 1, new Arg_Part("*", Arg_Type.Operator));
             }
         }
 
@@ -217,17 +263,17 @@ namespace Sandbox
             switch (op)
             {
                 case Operators.ADD:
-                    return new Arg_Part((Double.Parse(one.value) + Double.Parse(two.value)).ToString(), Arg_Types.Constant);
+                    return new Arg_Part((Double.Parse(one.value) + Double.Parse(two.value)).ToString(), Arg_Type.Constant);
                 case Operators.SUBTRACT:
-                    return new Arg_Part((Double.Parse(one.value) - Double.Parse(two.value)).ToString(), Arg_Types.Constant);
+                    return new Arg_Part((Double.Parse(one.value) - Double.Parse(two.value)).ToString(), Arg_Type.Constant);
                 case Operators.MULTIPLY:
-                    return new Arg_Part((Double.Parse(one.value) * Double.Parse(two.value)).ToString(), Arg_Types.Constant);
+                    return new Arg_Part((Double.Parse(one.value) * Double.Parse(two.value)).ToString(), Arg_Type.Constant);
                 case Operators.DIVIDE:
-                    return new Arg_Part((Double.Parse(one.value) / Double.Parse(two.value)).ToString(), Arg_Types.Constant);
+                    return new Arg_Part((Double.Parse(one.value) / Double.Parse(two.value)).ToString(), Arg_Type.Constant);
                 case Operators.MODULO:
-                    return new Arg_Part((Double.Parse(one.value) % Double.Parse(two.value)).ToString(), Arg_Types.Constant);
+                    return new Arg_Part((Double.Parse(one.value) % Double.Parse(two.value)).ToString(), Arg_Type.Constant);
                 case Operators.EXPONENT:
-                    return new Arg_Part(Math.Pow(Double.Parse(one.value), Double.Parse(two.value)).ToString(), Arg_Types.Constant);
+                    return new Arg_Part(Math.Pow(Double.Parse(one.value), Double.Parse(two.value)).ToString(), Arg_Type.Constant);
                 default:
                     return new Arg_Part();
             }
@@ -244,7 +290,7 @@ namespace Sandbox
                 throw new ArgumentException("Please provide an unary operator.");
             if (op == Operators.FACTORIAL && (int)Double.Parse(arg.value) != Double.Parse(arg.value))
                 throw new ArgumentException("Factorial requires an integer!");
-            return new Arg_Part((Factorial((long)Double.Parse(arg.value))).ToString(), Arg_Types.Constant);
+            return new Arg_Part((Factorial((long)Double.Parse(arg.value))).ToString(), Arg_Type.Constant);
         }
 
         /// <summary>
@@ -255,7 +301,7 @@ namespace Sandbox
         {
             for (int index = 1; index < ops.Count; index++)
             {
-                if (ops[index].classification == Arg_Types.Operator)
+                if (ops[index].classification == Arg_Type.Operator)
                 {
                     switch (ops[index].opType)
                     {
@@ -300,7 +346,7 @@ namespace Sandbox
         {
               for(int index = 0; index < ops.Count; index++)
               {
-                    if(ops[index].classification == Arg_Types.Grouper)
+                    if(ops[index].classification == Arg_Type.Grouper)
                     {
                           switch(ops[index].value)
                           {
@@ -309,7 +355,7 @@ namespace Sandbox
                                     // need to have a private Constructor for Function that takes a List of Arg_Parts
                                     Function inner = new Function(ops.GetRange(index, index2 - index), this.parameter);
                                     double total_val = inner.Evaluate(this.argval);
-                                    Arg_Part innerVal = new Arg_Part(total_val.ToString(), Arg_Types.Constant);
+                                    Arg_Part innerVal = new Arg_Part(total_val.ToString(), Arg_Type.Constant);
                                     ops.RemoveRange(index, index2 - index);
                                     ops.Insert(index, innerVal);
                                         break;
@@ -343,7 +389,7 @@ namespace Sandbox
             int balance = 1;
             for (int index = i; index < ops.Count; index++)
             {
-                if (ops[index].classification == Arg_Types.Grouper)
+                if (ops[index].classification == Arg_Type.Grouper)
                 {
                     switch (ops[index].value)
                     {
@@ -425,7 +471,7 @@ namespace Sandbox
         #endregion
 
         #region Groupers
-        public enum Arg_Types
+        public enum Arg_Type
         {
             Constant,
             Predefined,
