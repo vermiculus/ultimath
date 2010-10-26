@@ -44,6 +44,7 @@
             this.txtIn.Name = "txtIn";
             this.txtIn.Size = new System.Drawing.Size(514, 20);
             this.txtIn.TabIndex = 0;
+            this.txtIn.Text = "5+(5*5)";
             // 
             // btnSubmit
             // 
@@ -109,6 +110,7 @@
             this.Controls.Add(this.txtOut);
             this.Name = "Form1";
             this.Text = "Sandbox";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

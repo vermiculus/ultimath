@@ -40,5 +40,10 @@ namespace Sandbox
         {
             txtOut.Clear();
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            btnSubmit_Click(sender, e);
+        }
     }
 }
