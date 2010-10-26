@@ -30,7 +30,8 @@ namespace Sandbox
         Arg_Type Arg_Type_Of(char c)
         {
             const string _operators = "+-*/^%!";
-            const string _groupers = "()[]{}";
+            const string _lgroupers = "([{";
+            const string _rgroupers = ")]}";
 
             if (Char.IsDigit(c) || c == '.')
                 return Arg_Type.Constant;
@@ -38,8 +39,10 @@ namespace Sandbox
                 return Arg_Type.Variable;
             if (_operators.Contains(c))
                 return Arg_Type.Operator;
-            if (_groupers.Contains(c))
-                return Arg_Type.Grouper;
+            if (_lgroupers.Contains(c))
+                return Arg_Type.LGrouper;
+            if (_rgroupers.Contains(c))
+                return Arg_Type.RGrouper;
             if (c == '#')
                 return Arg_Type.Predefined;
             return Arg_Type.Unknown;
@@ -229,8 +232,8 @@ namespace Sandbox
                 // may want to revise so that VariableConstant is parsed as Variable^Constant
                 if (((ops[index].classification == Arg_Type.Constant) && (ops[index + 1].classification == Arg_Type.Variable)) ||
                     ((ops[index].classification == Arg_Type.Variable) && (ops[index + 1].classification == Arg_Type.Constant)) ||
-                    ((ops[index].classification == Arg_Type.Constant) && (ops[index + 1].classification == Arg_Type.Grouper)) ||
-                    ((ops[index].classification == Arg_Type.Variable) && (ops[index + 1].classification == Arg_Type.Grouper)))
+                    ((ops[index].classification == Arg_Type.Constant) && (ops[index + 1].classification == Arg_Type.LGrouper)) ||
+                    ((ops[index].classification == Arg_Type.Variable) && (ops[index + 1].classification == Arg_Type.LGrouper)))
                     ops.Insert(index + 1, new Arg_Part("*", Arg_Type.Operator));
             }
         }
@@ -304,70 +307,118 @@ namespace Sandbox
         /// <param name="ops"></param>
         private List<Arg_Part> DoConstants(List<Arg_Part> ops)
         {
-            this.DoParen(ref ops);
-            for (int index = 1; index < ops.Count; index++)
+            ops = this.DoParen(ops);
+            ops = this._Exponentiate(ops);
+            ops = this._MultiplyAndDivide(ops);
+            ops = this._AddAndSubtract(ops);
+            return ops;
+        }
+
+        private List<Arg_Part> _Exponentiate(List<Arg_Part> ops)
+        {
+            int count = ops.Count;
+
+            while (true)
             {
-                if (ops[index].classification == Arg_Type.Operator)
+                for (int index = 1; index < ops.Count; index++)
                 {
-                    switch (ops[index].opType)
+                    if (ops[index].classification == Arg_Type.Operator && ops[index].opType == Operators.EXPONENT)
                     {
-                        case Operators.ADD:
-                            ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.ADD, ops[index + 1]));
-                            ops.RemoveRange(index, 3);
-                            break;
-                        case Operators.SUBTRACT:
-                            ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.SUBTRACT, ops[index + 1]));
-                            ops.RemoveRange(index, 3);
-                            break;
-                        case Operators.MULTIPLY:
-                            ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.MULTIPLY, ops[index + 1]));
-                            ops.RemoveRange(index, 3);
-                            break;
-                        case Operators.DIVIDE:
-                            ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.DIVIDE, ops[index + 1]));
-                            ops.RemoveRange(index, 3);
-                            break;
-                        case Operators.MODULO:
-                            ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.MODULO, ops[index + 1]));
-                            ops.RemoveRange(index, 3);
-                            break;
-                        case Operators.EXPONENT:
-                            ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.EXPONENT, ops[index + 1]));
-                            ops.RemoveRange(index, 3);
-                            break;
-                        case Operators.FACTORIAL:
-                            ops.Insert(index - 1, DoUnary(ops[index - 1], Operators.FACTORIAL));
-                            ops.RemoveRange(index, 2);
-                            break;
+                        ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.EXPONENT, ops[index + 1]));
+                        ops.RemoveRange(index, 3);
+                        break;
                     }
                 }
-            }
 
-            if (ops.Count == 1)
-                return ops;
-            else
-                return DoConstants(ops);
+                if (ops.Count == count) return ops;
+                count = ops.Count;
+            }
+        }
+        private List<Arg_Part> _AddAndSubtract(List<Arg_Part> ops)
+        {
+            int count = ops.Count;
+
+            while (true)
+            {
+                for (int index = 1; index < ops.Count; index++)
+                {
+                    if (ops[index].classification == Arg_Type.Operator)
+                    {
+                        switch (ops[index].opType)
+                        {
+                            case Operators.ADD:
+                                ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.ADD, ops[index + 1]));
+                                ops.RemoveRange(index, 3);
+                                break;
+                            case Operators.SUBTRACT:
+                                ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.SUBTRACT, ops[index + 1]));
+                                ops.RemoveRange(index, 3);
+                                break;
+                        }
+                    }
+                }
+
+                if (ops.Count == count) return ops;
+                count = ops.Count;
+            }
+        }
+        private List<Arg_Part> _MultiplyAndDivide(List<Arg_Part> ops)
+        {
+            int count = ops.Count;
+
+            while (true)
+            {
+                for (int index = 1; index < ops.Count; index++)
+                {
+                    if (ops[index].classification == Arg_Type.Operator)
+                    {
+                        switch (ops[index].opType)
+                        {
+                            case Operators.MULTIPLY:
+                                ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.MULTIPLY, ops[index + 1]));
+                                ops.RemoveRange(index, 3);
+                                break;
+                            case Operators.DIVIDE:
+                                ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.DIVIDE, ops[index + 1]));
+                                ops.RemoveRange(index, 3);
+                                break;
+                            case Operators.MODULO:
+                                ops.Insert(index - 1, DoBinary(ops[index - 1], Operators.MODULO, ops[index + 1]));
+                                ops.RemoveRange(index, 3);
+                                break;
+                            case Operators.FACTORIAL:
+                                ops.Insert(index - 1, DoUnary(ops[index - 1], Operators.FACTORIAL));
+                                ops.RemoveRange(index, 2);
+                                break;
+                        }
+                    }
+                }
+
+                if (ops.Count == count) return ops;
+                count = ops.Count;
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="ops"></param>
-        private void DoParen(ref List<Arg_Part> ops)
+        private List<Arg_Part> DoParen(List<Arg_Part> ops)
         {
               for(int index = 0; index < ops.Count; index++)
               {
-                    if(ops[index].classification == Arg_Type.Grouper)
+                    if(ops[index].classification == Arg_Type.LGrouper)
                     {
                           switch(ops[index].value)
                           {
                                 case "(":
                                     int index2 = FindBrother(ops, index);
                                     // need to have a private Constructor for Function that takes a List of Arg_Parts
-                                    Function inner = new Function(ops.GetRange(index, index - index2), this.parameter);
+                                    Function inner = new Function(ops.GetRange(index+1, index2 - index-1), this.parameter);
                                     double total_val = inner.Evaluate(this.argval);
-                                    Arg_Part innerVal = new Arg_Part(total_val.ToString(), Arg_Type.Constant);
-                                    ops.RemoveRange(index, index2 - index);
+                                    Arg_Part innerVal = new Arg_Part(inner.arg_list[0].value, Arg_Type.Constant);
+                                    int x = 0;
+                                    ops.RemoveRange(index, index2 - index + 1);
                                     ops.Insert(index, innerVal);
                                         break;
                                 case "[":
@@ -379,50 +430,44 @@ namespace Sandbox
                           }
                     }
               }
+              return ops;
         }
 
         private int FindBrother(List<Arg_Part> ops, int i)
         {
-            Groupers Class = (Groupers)ops[i].value[0];
-            Groupers AntiClass;
+            LGroupers Class = (LGroupers)ops[i].value[0];
+            RGroupers AntiClass;
             switch (Class)
             {
-                case Groupers.LBRACE:
-                    AntiClass = Groupers.RBRACE;
+                case LGroupers.BRACE:
+                    AntiClass = RGroupers.BRACE;
                     break;
-                case Groupers.LBRACKET:
-                    AntiClass = Groupers.RBRACKET;
+                case LGroupers.BRACKET:
+                    AntiClass = RGroupers.BRACKET;
                     break;
-                case Groupers.LPAREN:
-                    AntiClass = Groupers.RPAREN;
+                case LGroupers.PAREN:
+                    AntiClass = RGroupers.PAREN;
                     break;
             }
-            int balance = 1;
-            for (int index = i; index < ops.Count; index++)
+            int balance = 0;
+            int index = i;
+            for (; index < ops.Count; index++)
             {
-                if (ops[index].classification == Arg_Type.Grouper)
+                if (ops[index].classification == Arg_Type.LGrouper)
+                {    
+                    balance++;
+                }
+                if (ops[index].classification == Arg_Type.RGrouper)
+                {    
+                    balance--;
+                }
+                if (balance == 0)
                 {
-                    switch (ops[index].value)
-                    {
-                        case "(":
-                        case "{":
-                        case "[":
-                            balance++;
-                            break;
-                        case ")":
-                        case "}":
-                        case "]":
-                            balance--;
-                            break;
-                    }
-                    if (balance == 0)
-                    {
-                        Console.WriteLine(index);
-                        return index;
-                    }
+                    Console.WriteLine(index);
+                    return index;
                 }
             }
-            return 0;
+            return index;
         }
 
         #endregion
@@ -493,7 +538,8 @@ namespace Sandbox
             Predefined,
             Variable,
             Operator,
-            Grouper,
+            LGrouper,
+            RGrouper,
             Unknown,
             Void
         }
@@ -508,14 +554,17 @@ namespace Sandbox
             FACTORIAL = '!',
             NULL
         }
-        public enum Groupers
+        public enum LGroupers
         {
-            LPAREN = '(',
-            RPAREN = ')',
-            LBRACKET = '[',
-            RBRACKET = ']',
-            LBRACE = '{',
-            RBRACE = '}'
+            PAREN = '(',
+            BRACKET = '[',
+            BRACE = '{',
+        }
+        public enum RGroupers
+        {
+            PAREN = ')',
+            BRACKET = ']',
+            BRACE = '}'
         }
         #endregion
     }
