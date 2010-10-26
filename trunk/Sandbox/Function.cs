@@ -22,11 +22,17 @@ namespace Sandbox
 
         #region Private
         #region Vars, Structs, etc.
+
         private string definition;
         private char parameter;
 
         private double argval; // placeholder for the value passed to the function
 
+        /// <summary>
+        /// Converts a char into an Arg_Type
+        /// </summary>
+        /// <param name="c">The char to classify</param>
+        /// <returns>The classification of c</returns>
         Arg_Type Arg_Type_Of(char c)
         {
             const string _operators = "+-*/^%!";
@@ -47,6 +53,9 @@ namespace Sandbox
                 return Arg_Type.Predefined;
             return Arg_Type.Unknown;
         }
+        /// <summary>
+        /// A monument to all your sins.
+        /// </summary>
         public class Arg_Part
         {
             /// <summary>
@@ -57,6 +66,9 @@ namespace Sandbox
             /// Constant, Variable, Grouper, etc.
             /// </summary>
             public Arg_Type classification;
+            /// <summary>
+            /// 
+            /// </summary>
             public Operators opType;
             public Arg_Part(string Value, Arg_Type Classification)
             {
@@ -93,7 +105,10 @@ namespace Sandbox
                 return r;
             }
         };
-        // I believe the ICollection is the closest thing to a C# vector
+
+        /// <summary>
+        /// The master list... muhahahaha
+        /// </summary>
         public List<Arg_Part> arg_list = new List<Arg_Part> { };
 #endregion
         #region Tokenize
@@ -102,7 +117,7 @@ namespace Sandbox
             this.Definition = this.Definition.Replace(" ", ""); // Keep this in case I remember anything else we should strip
             //this.Definition = this.Definition.Replace("#pi", Math.PI.ToString());
         }
-        private List<Arg_Part> Tokenize_20101018(string s)
+        private List<Arg_Part> Tokenize(string s)
         {
             Validate();
 
@@ -126,95 +141,6 @@ namespace Sandbox
             }
 
             return r;
-        }
-        private void Tokenize()//Tokenize_StevensTest
-        {
-            // Strip whitespace and check for invalid 
-            Validate();
-
-            bool isVariable = false; // To check if we should keep adding to the variable string
-
-            for (int index = 0; index < this.definition.Length; index++)
-            {
-                char c = definition[index];
-                Arg_Type type = Arg_Type_Of(c);
-
-                // This is the predefined constants parser... its completion level is like -45684%
-
-                //if (type == Arg_Types.Predefined)
-                //{
-                //    int start = index++;
-                //    for (; index < this.definition.Length; index++)
-                //    {
-                //        if (!Char.IsLetter(this.definition[index]))
-                //        {
-                //            arg_list.Add(new Arg_Part(this.definition.Substring(start, index - start), Arg_Types.Predefined));
-                //            break;
-                //        }
-                //    }
-                //}
-
-                // If its a variable then lets see if we had a variable last time we went through
-                if (type == Arg_Type.Constant)
-                {
-                    if (isVariable)
-                    { // Append to the last argument in the list, our variable
-                        Arg_Part buf = arg_list[arg_list.Count-1]; 
-
-                        buf.value += c;
-                        arg_list[arg_list.Count-1] = buf;
-                    }   
-                    else
-                    { // It's a new variable, let's make a new argument and add it to the list
-                        isVariable = true;
-
-                        Arg_Part buf = new Arg_Part(c.ToString(), type);
-                       
-                        arg_list.Add(buf);
-                    }
-                }
-                else
-                {
-                    isVariable = false;
-
-                    Arg_Part buf = new Arg_Part(c.ToString(), type);
-                    Arg_Part prevArg = arg_list[arg_list.Count - 1];
-
-                    if (prevArg.classification == Arg_Type.Operator && type == Arg_Type.Operator)
-                        throw new InvalidOperationException("Two or more operators were found adjacent to each another: not allowed! PARADOX!");
-
-                    arg_list.Add(buf);
-                }
-            }
-        }
-
-        private void __Tokenize_old()
-        {
-            string arg_buffer = "";
-            Arg_Type type_buffer = Arg_Type.Void;
-            foreach (char c in this.Definition)
-            {
-                if (type_buffer == Arg_Type.Void)
-                {
-                    type_buffer = Arg_Type_Of(c);
-                    arg_buffer += c;
-                    continue;
-                }
-                if (type_buffer == Arg_Type_Of(c))
-                    arg_buffer += c;
-
-                if ((type_buffer != Arg_Type_Of(c)) || (this.Definition[this.Definition.Length - 1] == c))
-                {
-                    Arg_Part buf = new Arg_Part(arg_buffer, type_buffer);
-
-                    if (buf.classification == Arg_Type.Operator && buf.value.Length > 1)
-                        throw new InvalidOperationException("Two or more operators were found adjacent to each another: not allowed!");
-
-                    arg_list.Add(buf);
-                    arg_buffer = c.ToString();
-                    type_buffer = Arg_Type_Of(c);
-                }
-            }
         }
         #endregion
         #region Do Work, Son!
@@ -304,7 +230,7 @@ namespace Sandbox
         /// <summary>
         /// Sorts out all of our constant operations, if any
         /// </summary>
-        /// <param name="ops"></param>
+        /// <param name="ops">The list of Arg_Parts to do such on</param>
         private List<Arg_Part> DoConstants(List<Arg_Part> ops)
         {
             ops = this.DoParen(ops);
@@ -314,6 +240,11 @@ namespace Sandbox
             return ops;
         }
 
+        /// <summary>
+        /// Performs Exponentiation
+        /// </summary>
+        /// <param name="ops">The list of Arg_Parts to do such on</param>
+        /// <returns>The modified list of Arg_Parts</returns>
         private List<Arg_Part> _Exponentiate(List<Arg_Part> ops)
         {
             int count = ops.Count;
@@ -334,6 +265,11 @@ namespace Sandbox
                 count = ops.Count;
             }
         }
+        /// <summary>
+        /// Performs Addition and Subtraction
+        /// </summary>
+        /// <param name="ops">The list of Arg_Parts to do such on</param>
+        /// <returns>The modified list of Arg_Parts</returns>
         private List<Arg_Part> _AddAndSubtract(List<Arg_Part> ops)
         {
             int count = ops.Count;
@@ -362,6 +298,11 @@ namespace Sandbox
                 count = ops.Count;
             }
         }
+        /// <summary>
+        /// Performs Multiplication (and Factorials) and Division and (Modulos)
+        /// </summary>
+        /// <param name="ops">The list of Arg_Parts to do such on</param>
+        /// <returns>The modified list of Arg_Parts</returns>
         private List<Arg_Part> _MultiplyAndDivide(List<Arg_Part> ops)
         {
             int count = ops.Count;
@@ -400,100 +341,87 @@ namespace Sandbox
         }
 
         /// <summary>
-        /// 
+        /// Handles parentheticals recursively
         /// </summary>
-        /// <param name="ops"></param>
+        /// <param name="ops">The list of Arg_Parts to do such on</param>
+        /// <returns>The modified list of Arg_Parts</returns>
         private List<Arg_Part> DoParen(List<Arg_Part> ops)
         {
               for(int index = 0; index < ops.Count; index++)
               {
                     if(ops[index].classification == Arg_Type.LGrouper)
                     {
-                          switch(ops[index].value)
-                          {
-                                case "(":
-                                    int index2 = FindBrother(ops, index);
-                                    // need to have a private Constructor for Function that takes a List of Arg_Parts
-                                    Function inner = new Function(ops.GetRange(index+1, index2 - index-1), this.parameter);
-                                    double total_val = inner.Evaluate(this.argval);
-                                    Arg_Part innerVal = new Arg_Part(inner.arg_list[0].value, Arg_Type.Constant);
-                                    int x = 0;
-                                    ops.RemoveRange(index, index2 - index + 1);
-                                    ops.Insert(index, innerVal);
-                                        break;
-                                case "[":
-                                    // '' likewise ''
-                                        break;
-                                case "{":
-                                    // '' likewise ''
-                                        break;
-                          }
+                        // Get the index of the closing Grouper
+                        int index2 = FindBrother(ops, index);
+                        // Declare the innards of the Groupers as a new Function and Evaluate
+                        Function inner = new Function(ops.GetRange(index + 1, index2 - index - 1), this.parameter);
+                        double total_val = inner.Evaluate(this.argval);
+                        // Create an Arg_Part representation of the result
+                        Arg_Part innerVal = new Arg_Part(total_val.ToString(), Arg_Type.Constant);
+                        // Get rid of the Groupers and their innards
+                        ops.RemoveRange(index, index2 - index + 1);
+                        // Insert the new Arg_Part
+                        ops.Insert(index, innerVal);
                     }
               }
               return ops;
         }
 
+        /// <summary>
+        /// Finds the next index where the groupers balance out.
+        /// TODO: Add verification that we can't just be like 5+(2*x], which would be perfectly okay right now.
+        /// </summary>
+        /// <param name="ops">The list of argparts to search in</param>
+        /// <param name="i">the index of the starting Grouper</param>
+        /// <returns></returns>
         private int FindBrother(List<Arg_Part> ops, int i)
         {
-            LGroupers Class = (LGroupers)ops[i].value[0];
-            RGroupers AntiClass;
-            switch (Class)
-            {
-                case LGroupers.BRACE:
-                    AntiClass = RGroupers.BRACE;
-                    break;
-                case LGroupers.BRACKET:
-                    AntiClass = RGroupers.BRACKET;
-                    break;
-                case LGroupers.PAREN:
-                    AntiClass = RGroupers.PAREN;
-                    break;
-            }
-            int balance = 0;
-            int index = i;
+            int balance = 0, index = i;
             for (; index < ops.Count; index++)
             {
                 if (ops[index].classification == Arg_Type.LGrouper)
-                {    
                     balance++;
-                }
                 if (ops[index].classification == Arg_Type.RGrouper)
-                {    
                     balance--;
-                }
                 if (balance == 0)
-                {
-                    Console.WriteLine(index);
                     return index;
-                }
             }
-            return index;
+            return -1;
         }
 
         #endregion
         #endregion
 
         #region Public
-
+        /// <summary>
+        /// The string definition of the function.
+        /// </summary>
         public string Definition
         {
             get { return definition; }
             set { definition = value; }
         }
 
+        /// <summary>
+        /// The char parameter of the function
+        /// </summary>
         public char Parameter
         {
             get { return parameter; }
             //set { parameter = value; }
         }
 
+        /// <summary>
+        /// Substitutes necessary values with their respective parameters
+        /// </summary>
+        /// <param name="argument">The value to evaluate at</param>
+        /// <returns>The value of the function</returns>
         public double Evaluate(double argument)
         {
             double value = Double.NaN;
 
             return value;
         }
-
         #endregion
 
         #endregion
@@ -510,7 +438,7 @@ namespace Sandbox
             this.definition = Def;
             this.parameter = Param;
 
-            this.arg_list = Tokenize_20101018(this.definition);
+            this.arg_list = Tokenize(this.definition);
 
             this.ParseImpliedMultiplication(ref this.arg_list);
 
