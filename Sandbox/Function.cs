@@ -16,7 +16,7 @@ namespace Sandbox
         }
 
         // Just had an idea to have predefined constants - want to write it down
-        // If we can use a flag character (I was thinking #) before a predefined keyword
+        // If we can use a flag character (I was thinking # or @) before a predefined keyword
         // we can parse that out. Ex. #pir^2 -> 3.14159r^2
         #region Variable Members
 
@@ -58,6 +58,7 @@ namespace Sandbox
         /// </summary>
         public class Arg_Part
         {
+            #region Instance Variables
             /// <summary>
             /// The string value of the struct.
             /// </summary>
@@ -67,9 +68,16 @@ namespace Sandbox
             /// </summary>
             public Arg_Type classification;
             /// <summary>
-            /// 
+            /// The operator (iff it is Arg_Type.Operator)
             /// </summary>
             public Operators opType;
+            #endregion
+
+            /// <summary>
+            /// Recommended constructor for an Arg_Part
+            /// </summary>
+            /// <param name="Value">The string value of the Arg_Part</param>
+            /// <param name="Classification">its Arg_Type</param>
             public Arg_Part(string Value, Arg_Type Classification)
             {
                 value = Value;
@@ -85,12 +93,24 @@ namespace Sandbox
                         case "^": opType = Operators.EXPONENT; break;
                         case "!": opType = Operators.FACTORIAL; break; } }
             }
+
+            /// <summary>
+            /// Default constructor for an empty Arg_Part
+            /// </summary>
             public Arg_Part()
             {
                 value = string.Empty;
                 classification = Arg_Type.Void;
                 opType = Operators.NULL;
             }
+
+            /// <summary>
+            /// Concactenates the values of two Arg_Parts
+            /// </summary>
+            /// <param name="a">first arg</param>
+            /// <param name="b">second arg</param>
+            /// <returns>a new Arg_Part with the same classification as (a,b) but with both values.</returns>
+            /// <remarks>essentially the same as string+string</remarks>
             public static Arg_Part operator +(Arg_Part a, Arg_Part b)
             {
                 Arg_Part r = new Arg_Part();
@@ -427,7 +447,6 @@ namespace Sandbox
         #endregion
 
         #region Constructors
-
         /// <summary>
         /// Function Constructor
         /// </summary>
@@ -439,17 +458,8 @@ namespace Sandbox
             this.parameter = Param;
 
             this.arg_list = Tokenize(this.definition);
-
             this.ParseImpliedMultiplication(ref this.arg_list);
-
             this.arg_list = DoConstants(arg_list);
-            // Sort out our constant operations, if any
-            //int before = 0, after = 0;
-            //do {
-            //    before = arg_list.Count;
-            //    this.DoConstants(ref arg_list);
-            //    after = arg_list.Count;
-            //} while (before != after);
         }
         private Function(List<Arg_Part> ops, char param)
         {
