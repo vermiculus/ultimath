@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+// two groupers in a row
+
 namespace Sandbox
 {
     public class Function
@@ -152,6 +154,10 @@ namespace Sandbox
                 {
                     // try appending the value of this char's Arg_Part representation
                     r[r.Count - 1] += This;
+                    if (This.classification == Arg_Type.RGrouper || This.classification == Arg_Type.LGrouper)
+                    {
+                        //throw new ArgumentException("This was just to force the compiler to create a new token; nothing is wrong. Well, if the program has crashed there is definitely something wrong, but I swear, it's not my fault.");
+                    }
                 }
                 catch (ArgumentException)
                 {
@@ -438,9 +444,9 @@ namespace Sandbox
         /// <returns>The value of the function</returns>
         public double Evaluate(double argument)
         {
-            double value = Double.NaN;
+            //double value = Double.NaN;
 
-            return value;
+            return Double.Parse(this.arg_list[0].value);
         }
         #endregion
 

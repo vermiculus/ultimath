@@ -1,6 +1,4 @@
-#ifndef BASICS_H_
-#define BASICS_H_
-
+#pragma once
 #include <string>
 #include "Function.h"
 
@@ -53,4 +51,13 @@ struct Number
 	double ToDouble();
 };
 
-#endif
+namespace Operations
+{
+	static long Factorial(int argument)
+	{
+		if (argument <= 1)
+			return 1;
+		else
+			return argument * Factorial(argument - 1);
+	}
+}

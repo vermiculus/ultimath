@@ -17,7 +17,7 @@ Hopefully posting this to Google Code and DreamInCode
 will get it some collaborative activity.
 
 This header file is going to tie in all the sub-header files,
-such as Function, Physics, Calculus, Geometry, etc.
+such as _Function, Physics, Calculus, Geometry, etc.
 
 It is also going to contain this block of comments
 to introduce users to the engine, and give them
@@ -36,16 +36,16 @@ Basics.h
 		int Factors(int number);
 		int GetFactors( void );
 
-Function.h
+_Function.h
 	double sec(double argument);
 	double csc(double argument);
 	double cot(double argument);
 	double log(double argument);
-	class Function
+	class _Function
 		public:
-			Function(string definition, char parameter);
-			Function(char definition[], char parameter);
-			~Function(void);
+			_Function(string definition, char parameter);
+			_Function(char definition[], char parameter);
+			~_Function(void);
 			string definition;
 			char parameter;
 			double Evaluate(double argument);
@@ -60,7 +60,7 @@ Function.h
 			void StripWhiteSpace();
 			void InsertArgument();
 			void ParseImpliedMultiplication();
-			void PerformFunctions();
+			void Perform_Functions();
 			void PerformParanthesis();
 			void PerformExponentiation();
 			void PerformMultiplicationAndDivision();

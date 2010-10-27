@@ -4,6 +4,8 @@
 
 #include <vector>
 
+using namespace std;
+
 int main( void )
 {
 	cout << "Testing has begun.\n";
@@ -18,11 +20,11 @@ int main( void )
 		//cout << collection[index] << " ";
 		printf("%10i\n", collection[index]);
 	printf("\n\n\n");
-	Function f("2*x",'x');
+	/*_Function f("2*x",'x');
 	cout << f.Evaluate(4);
 	cin.sync();
 	cout << "\n\nPlease press enter to exit.";
-	cin.ignore();
+	cin.ignore();*/
 
 	// Did you know? Some DIC member (I forget who at the moment) did a benchmark test
 	// to see which was faster, and printf() is almost twice as fast.
