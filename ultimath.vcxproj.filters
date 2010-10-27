@@ -21,18 +21,12 @@
     <ClCompile Include="chassis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Function.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ultimath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Function.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
