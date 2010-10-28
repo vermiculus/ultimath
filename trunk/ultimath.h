@@ -2,7 +2,6 @@
 #define ULTIMATH_H_
 
 #include "Basics.h"
-#include "Function.h"
 /*
 SPECIAL GOALS
 

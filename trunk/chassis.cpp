@@ -1,4 +1,5 @@
 #include "ultimath.h"
+#include <iostream>
 // This chassis would be pointless without it.
 // This header file is a collection of the seperate components of the Ultimath Engine.
 

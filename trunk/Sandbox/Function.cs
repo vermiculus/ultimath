@@ -380,6 +380,8 @@ namespace Sandbox
                         // Get the index of the closing Grouper
                         int index2 = FindBrother(ops, index);
                         // Declare the innards of the Groupers as a new Function and Evaluate
+                        if (index2 == -1) // appears to happen whenever we have this situation or similar "a(b(c))"
+                            throw new NullReferenceException("Hmm... I wasn't able to find a matching grouper for this part...");
                         Function inner = new Function(ops.GetRange(index + 1, index2 - index - 1), this.parameter);
                         double total_val = inner.Evaluate(this.argval);
                         // Create an Arg_Part representation of the result
