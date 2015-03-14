@@ -1,0 +1,3 @@
+A C++ library of functions that use mathematical formulas to evaluate data. Currently working on string parser to take mathematical strings such as "(2x+5y(2^8x))/z" and evaluate them for values of x, y, and z. Doing so will not only allow for custom formulae, but will create a macro to evaluate standardized formulae, such as the quadratic equation or other concrete functions.
+
+As of October 2, 2010, the numerical processor is complete. All that remains is substitution, which should be fairly simple... I take that back :)
